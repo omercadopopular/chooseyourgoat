@@ -30,6 +30,9 @@ for (const player of data.players) {
   }
 }
 
+const haalandCity = data.players.find(player=>player.id==="haaland").observations.filter(row=>row.team==="Manchester City");
+if (haalandCity.reduce((sum,row)=>sum+row.appearances,0)!==170 || haalandCity.reduce((sum,row)=>sum+row.goals,0)!==149) errors.push("haaland: Manchester City ledger must reconcile to 170 appearances/149 goals at cutoff");
+
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);

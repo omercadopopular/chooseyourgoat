@@ -67,6 +67,20 @@ test("Europe club columns are classified as continental federation cups", () => 
   }
 });
 
+test("Haaland includes the dated 2025-26 segment through the cutoff", () => {
+  const haaland = players.find(player => player.id === "haaland");
+  const city = haaland.observations.filter(row => row.team === "Manchester City");
+  assert.deepEqual(
+    [city.reduce((sum,row)=>sum+row.appearances,0), city.reduce((sum,row)=>sum+row.goals,0)],
+    [170,149]
+  );
+  const partial = city.filter(row => row.source_granularity === "partial_season_from_match_ledger");
+  assert.deepEqual(
+    [partial.reduce((sum,row)=>sum+row.appearances,0), partial.reduce((sum,row)=>sum+row.goals,0)],
+    [24,25]
+  );
+});
+
 test("Pelé's multi-year aggregate assertions are not plotted at 1974", () => {
   const pele = players.find(player => player.id === "pele");
   const otherClub = buildSeries(pele, { metric: "goals", axis: "careerSeason", buckets: ["all_other_club"] });

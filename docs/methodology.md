@@ -86,6 +86,14 @@ row are counted, while unresolved aggregate “Other” club cells and honours
 without edition-level participation evidence remain excluded and visibly
 marked as partial reconciliation.
 
+For Haaland, Manchester City's 2025-26 row cannot be used whole because it
+crosses the 31 December 2025 cutoff. The browser bundle therefore retains the
+completed-season table through the 2025 Club World Cup and adds the 24 club
+appearances and 25 goals from 16 August through 27 December 2025 from the dated
+Transfermarkt performance ledger. Bryne 2 and Molde 2 remain included in the
+broad club universe; excluding reserve-team records would reduce his plotted
+all-category total by 20 goals.
+
 For the plotted Pelé “all other club goals” curve, Santos friendly and tour
 matches are allocated by calendar year using the public match-by-match ledger
 at `pt.wikipedia.org/wiki/Estatísticas_de_Pelé`. Its Santos friendly series has

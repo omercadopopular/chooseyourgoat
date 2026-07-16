@@ -167,6 +167,37 @@ def tm_national(pid):
         raise ValueError(f'{pid}: Transfermarkt ledger reconciled to {len(rows)} caps/{sum(row["goals"] for row in rows)} goals, expected {expected_caps}/{expected_goals}')
     return grouped_national(pid,rows,f'https://tmapi.transfermarkt.technology/player/{payload["data"]["playerId"]}/performance-game')
 
+def haaland_partial_2025_club():
+    """Add the completed part of 2025-26 that a full-season table cannot date.
+
+    The cached career table contains the completed 2025-26 season, which would
+    cross the research cutoff. The match ledger lets us include only matches
+    after the already-counted 2025 Club World Cup through 31 December 2025.
+    """
+    payload=json.loads((RAW/'haaland_tm_performance.json').read_text()); birth=pd.Timestamp(PLAYERS['haaland']['birth'])
+    definitions={
+        'GB1':('Premier League','national_league'),
+        'CL':('UEFA Champions League','continental_federation_cup'),
+    }
+    grouped={}
+    for item in payload['data']['performance']:
+        game=item['gameInformation']; general=item['statistics']['generalStatistics']; club=item['clubsInformation']['club']
+        date=game['date']['dateTimeUTC'][:10]
+        if game['isNationalGame'] or str(club['clubId'])!='281' or general['participationState']!='played': continue
+        if not ('2025-07-01'<date<=DATA_CUTOFF.isoformat()): continue
+        if game['competitionId'] not in definitions: raise ValueError(f'haaland: unmapped 2025 club competition {game["competitionId"]}')
+        name,bucket=definitions[game['competitionId']]; item_group=grouped.setdefault((name,bucket),{'appearances':0,'goals':0,'wins':0,'dates':[]})
+        item_group['appearances']+=1
+        item_group['goals']+=int(item['statistics']['goalStatistics']['goalsScoredTotal'] or 0)
+        item_group['wins']+=club['goalsTotal']>club['opponentGoalsTotal']
+        item_group['dates'].append(date)
+    out=[]; end=pd.Timestamp(DATA_CUTOFF)
+    for (name,bucket),item in grouped.items():
+        out.append(dict(period='2025-26',period_end=DATA_CUTOFF.isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=bucket,competition_family=bucket,team='Manchester City',competition_name=name,appearances=item['appearances'],goals=item['goals'],wins=item['wins'],first_date=min(item['dates']),last_date=max(item['dates']),source_granularity='partial_season_from_match_ledger',source_url='https://tmapi.transfermarkt.technology/player/418560/performance-game'))
+    if sum(row['appearances'] for row in out)!=24 or sum(row['goals'] for row in out)!=25:
+        raise ValueError('haaland: partial 2025 club ledger did not reconcile to 24 appearances/25 goals')
+    return out
+
 def observations(pid):
     cfg=PLAYERS[pid]; birth=pd.Timestamp(cfg['birth']); out=[]
     df=find_table(pid,['club','season','total'])
@@ -190,6 +221,7 @@ def observations(pid):
             competition=clean(r[division]) if division and clean(r[division]).lower() not in {'nan','total',''} else base
             fam=bucket_family(base,competition)
             out.append(dict(period=period,period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=user_bucket(fam),competition_family=fam,team=team,competition_name=competition,appearances=apps,goals=goals,wins=None,source_granularity='season_bucket',source_url=source(pid)))
+    if pid=='haaland': out.extend(haaland_partial_2025_club())
     out.extend(tm_national(pid) if pid in TM_NATIONAL else rsssf_national(pid))
     return sorted(out,key=lambda x:(x['period_end'],x['team_context'],x['bucket']))
 
