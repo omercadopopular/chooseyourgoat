@@ -1,0 +1,26 @@
+name: Expand player dataset
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12', cache: pip}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: pip install -r requirements.txt
+      - run: python pipeline/download_public_sources.py --force
+      - run: python pipeline/build_public_dataset.py
+      - run: python pipeline/expand_web_dataset.py
+      - run: python pipeline/build_competition_editions.py
+      - run: npm run check
+      - name: Commit generated expansion
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data
+          git diff --cached --quiet || git commit -m "Build 15-player dataset"
+          git push

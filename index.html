@@ -46,6 +46,13 @@
           <p>Select two to four players. Every headline value is evaluated at the last point all selected players have in common.</p>
         </div>
 
+        <div class="player-filters">
+          <label class="player-search">Search players<input id="player-search" type="search" placeholder="Name or country" /></label>
+          <label>Era<select id="era-filter"><option value="all">All eras</option><option value="historical">Before 1980</option><option value="modern">1980–2009</option><option value="current">2010–present</option></select></label>
+          <label>Role<select id="role-filter"><option value="all">All roles</option><option value="forward">Forward</option><option value="attacking_midfielder">Attacking midfielder</option></select></label>
+          <label>Country<select id="country-filter"><option value="all">All countries</option></select></label>
+        </div>
+        <div class="selected-tray" id="selected-tray" aria-live="polite"></div>
         <div class="player-grid" id="player-grid" aria-label="Player selection"></div>
 
         <section class="restriction-panel" aria-labelledby="restriction-title">

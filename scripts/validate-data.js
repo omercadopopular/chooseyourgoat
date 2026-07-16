@@ -2,12 +2,12 @@ import { readFile } from "node:fs/promises";
 
 const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
 const errors = [];
-const expected = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
+const expected = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona", "mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
 const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
 if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
 if (data.meta.dataCutoff !== "2025-12-31") errors.push("unexpected data cutoff");
-if (JSON.stringify(data.players.map(player => player.id)) !== JSON.stringify(expected)) errors.push("six-player roster mismatch");
+if (JSON.stringify(data.players.map(player => player.id)) !== JSON.stringify(expected)) errors.push("15-player roster mismatch");
 
 for (const player of data.players) {
   if (!player.observations.length) errors.push(`${player.id}: no observations`);

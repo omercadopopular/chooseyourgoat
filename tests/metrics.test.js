@@ -13,8 +13,8 @@ test("research bundle has a fixed cutoff and is not a fixture", () => {
   assert.equal(data.meta.dataCutoff, "2025-12-31");
 });
 
-test("all six requested players exist", () => {
-  assert.deepEqual(players.map(player => player.id), ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"]);
+test("all 15 requested players exist", () => {
+  assert.deepEqual(players.map(player => player.id), ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona", "mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"]);
 });
 
 test("hierarchy contains every requested user bucket", () => {

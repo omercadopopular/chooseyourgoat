@@ -401,12 +401,12 @@ WEB_TAXONOMY = [
 ]
 
 WEB_PLAYERS = {
-    "pele":{"shortName":"Pelé","country":"Brazil","color":"#ef6f4d"},
-    "messi":{"shortName":"Messi","country":"Argentina","color":"#7c9cff"},
-    "cristiano":{"shortName":"Cristiano","country":"Portugal","color":"#d8b650"},
-    "ronaldo":{"shortName":"R9","country":"Brazil","color":"#53b98f"},
-    "ronaldinho":{"shortName":"Ronaldinho","country":"Brazil","color":"#ba78d1"},
-    "maradona":{"shortName":"Maradona","country":"Argentina","color":"#e45475"},
+    "pele":{"shortName":"Pelé","country":"Brazil","color":"#ef6f4d","era":"historical","role":"forward"},
+    "messi":{"shortName":"Messi","country":"Argentina","color":"#7c9cff","era":"modern","role":"forward"},
+    "cristiano":{"shortName":"Cristiano","country":"Portugal","color":"#d8b650","era":"modern","role":"forward"},
+    "ronaldo":{"shortName":"R9","country":"Brazil","color":"#53b98f","era":"modern","role":"forward"},
+    "ronaldinho":{"shortName":"Ronaldinho","country":"Brazil","color":"#ba78d1","era":"modern","role":"attacking_midfielder"},
+    "maradona":{"shortName":"Maradona","country":"Argentina","color":"#e45475","era":"historical","role":"attacking_midfielder"},
 }
 
 # Aggregate assertions that reconcile the fine Pelé season table to RSSSF's

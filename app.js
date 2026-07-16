@@ -10,15 +10,21 @@ const state = {
   common: true
 };
 const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true};
+const playerFilter={query:"",era:"all",role:"all",country:"all"};
 const $ = selector => document.querySelector(selector);
 const playerGrid = $("#player-grid");
 
 function renderPlayers() {
-  playerGrid.innerHTML = data.players.map((player, index) => `
+  const visible=data.players.filter(player=>{
+    const haystack=`${player.name} ${player.shortName} ${player.country}`.toLowerCase();
+    return (!playerFilter.query||haystack.includes(playerFilter.query))&&(playerFilter.era==="all"||player.era===playerFilter.era)&&(playerFilter.role==="all"||player.role===playerFilter.role)&&(playerFilter.country==="all"||player.country===playerFilter.country);
+  });
+  playerGrid.innerHTML = visible.length?visible.map((player) => `
     <button class="player-card ${state.selected.has(player.id) ? "selected" : ""}" data-id="${player.id}" aria-pressed="${state.selected.has(player.id)}">
-      <span class="number">0${index + 1}</span><span class="check">${state.selected.has(player.id) ? "●" : "○"}</span>
+      <span class="number">${player.eraLabel||player.years.split('–')[0]}</span><span class="check">${state.selected.has(player.id) ? "●" : "○"}</span>
       <strong>${player.shortName}</strong><small>${player.country} · ${player.years}</small>
-    </button>`).join("");
+    </button>`).join(""):'<div class="player-empty">No players match these filters.</div>';
+  $("#selected-tray").innerHTML=`<strong>${state.selected.size}/4 selected</strong>`+data.players.filter(p=>state.selected.has(p.id)).map(p=>`<span class="selected-chip">${p.shortName}</span>`).join('');
   playerGrid.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
     const id = button.dataset.id;
     if (state.selected.has(id) && state.selected.size > 2) state.selected.delete(id);
@@ -27,6 +33,13 @@ function renderPlayers() {
     renderChart();
     renderCompetitionChart();
   }));
+}
+
+function setupPlayerFilters(){
+  const countries=[...new Set(data.players.map(p=>p.country))].sort();
+  $("#country-filter").innerHTML='<option value="all">All countries</option>'+countries.map(c=>`<option value="${c}">${c}</option>`).join('');
+  $("#player-search").addEventListener('input',e=>{playerFilter.query=e.target.value.trim().toLowerCase();renderPlayers();});
+  [["#era-filter","era"],["#role-filter","role"],["#country-filter","country"]].forEach(([selector,key])=>$(selector).addEventListener('change',e=>{playerFilter[key]=e.target.value;renderPlayers();}));
 }
 
 function setGroup(groupId, checked) {
@@ -170,6 +183,7 @@ $("#common-support").addEventListener("change", event => {
 $("#competition-common-support").addEventListener("change",event=>{competitionState.common=event.target.checked;renderCompetitionChart();});
 
 renderPlayers();
+setupPlayerFilters();
 renderRestrictions();
 renderCoverage();
 renderChart();
