@@ -3,45 +3,59 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { buildSeries, commonEndpoint, formatMetric, trimToCommon } from "../src/metrics.js";
 
-const fixture = JSON.parse(await readFile(new URL("../data/players.json", import.meta.url)));
-const players = fixture.players;
+const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
+const players = data.players;
+const groups = Object.fromEntries(data.taxonomy.map(group => [group.id, group.children.map(child => child.id)]));
+const allBuckets = Object.values(groups).flat();
 
-test("fixture is unmistakably marked as non-production", () => {
-  assert.equal(fixture.meta.isFixture, true);
-  assert.match(fixture.meta.notice, /not verified/i);
+test("research bundle has a fixed cutoff and is not a fixture", () => {
+  assert.equal(data.meta.isFixture, false);
+  assert.equal(data.meta.dataCutoff, "2025-12-31");
 });
 
 test("all six requested players exist", () => {
-  assert.deepEqual(players.map(p => p.id), ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"]);
+  assert.deepEqual(players.map(player => player.id), ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"]);
 });
 
-test("cumulative counts never decrease", () => {
+test("hierarchy contains every requested user bucket", () => {
+  assert.deepEqual(groups.club, ["national_league", "continental_federation_cup", "intercontinental_federation_cup", "regional_league", "all_other_club"]);
+  assert.ok(groups.national_team.includes("national_team_intercontinental_championship_finals"));
+  assert.ok(groups.national_team.includes("national_team_friendlies"));
+});
+
+test("cumulative goals and titles never decrease", () => {
   for (const player of players) {
-    for (const metric of ["goals"]) {
-      const series = buildSeries(player, { metric, axis: "careerSeason", universe: "all" });
-      series.slice(1).forEach((point, i) => assert.ok(point.y >= series[i].y, `${player.id} ${metric}`));
+    for (const metric of ["goals", "titles"]) {
+      const series = buildSeries(player, { metric, axis: "careerSeason", buckets: allBuckets });
+      series.slice(1).forEach((point, index) => assert.ok(point.y >= series[index].y, `${player.id} ${metric}`));
     }
   }
 });
 
-test("common support trims every series to a shared endpoint", () => {
-  const raw = players.slice(0, 3).map(player => buildSeries(player, { metric: "goals", axis: "careerSeason" }));
-  const endpoint = commonEndpoint(raw);
-  const trimmed = trimToCommon(raw);
-  assert.equal(endpoint, 22);
-  trimmed.forEach(series => assert.ok(Math.max(...series.map(p => p.x)) <= endpoint));
-});
-
-test("club and national universes partition appearances approximately", () => {
+test("club and national filters partition the web observations", () => {
   for (const player of players) {
-    const all = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "all" }).at(-1).appearances;
-    const club = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "club" }).at(-1).appearances;
-    const national = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "national" }).at(-1).appearances;
-    assert.ok(Math.abs(all - club - national) <= player.seasons.length);
+    const all = buildSeries(player, { metric: "goals", axis: "careerSeason", buckets: allBuckets }).at(-1);
+    const club = buildSeries(player, { metric: "goals", axis: "careerSeason", buckets: groups.club }).at(-1);
+    const national = buildSeries(player, { metric: "goals", axis: "careerSeason", buckets: groups.national_team }).at(-1);
+    assert.equal(all.goals, club.goals + national.goals);
+    assert.equal(all.appearances, club.appearances + national.appearances);
   }
 });
 
-test("shares format as percentages", () => {
-  assert.equal(formatMetric(.375, "trophyShare"), "37.5%");
-  assert.equal(formatMetric(null, "assists"), "N/A");
+test("Pelé all-category bridge reconciles to RSSSF's broad universe", () => {
+  const pele = players.find(player => player.id === "pele");
+  const total = buildSeries(pele, { metric: "goals", axis: "careerSeason", buckets: allBuckets }).at(-1);
+  assert.equal(total.appearances, 1413);
+  assert.equal(total.goals, 1324);
+});
+
+test("common support trims every populated series", () => {
+  const raw = players.slice(0, 3).map(player => buildSeries(player, { metric: "goals", axis: "age", buckets: allBuckets }));
+  const endpoint = commonEndpoint(raw);
+  trimToCommon(raw).forEach(series => assert.ok(Math.max(...series.map(point => point.x)) <= endpoint));
+});
+
+test("rates format with two decimal places", () => {
+  assert.equal(formatMetric(.375, "goalsPerGame"), "0.38");
+  assert.equal(formatMetric(null, "goalsPerGame"), "N/A");
 });

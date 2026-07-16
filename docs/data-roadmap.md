@@ -4,7 +4,8 @@
 
 - All six players have club season-by-competition aggregates and dated senior
   national-team goal events.
-- Maradona has a complete 91-appearance RSSSF national-team ledger.
+- All six have complete RSSSF senior national-team appearance ledgers through
+  31 December 2025: 800 appearances and 464 goals, fully reconciled.
 - Messi and Cristiano Ronaldo have CC0 match-level appearances, goals, minutes,
   opponents and results from 2012 in the current snapshot.
 - All six have championship-edition honour lists with runner-up and individual
@@ -31,19 +32,17 @@
 
 ## Next ingestion order
 
-1. Build full senior national-team appearance ledgers for the other five from
-   federation/RSSSF lists, then reconcile every dated goal.
-2. Build Pelé’s club match ledger, including friendlies and tours, preserving
+1. Build Pelé’s club match ledger, including friendlies and tours, preserving
    each source treatment and dispute rather than collapsing to one total.
-3. Extend Maradona, Ronaldo Nazário and Ronaldinho club match ledgers from RSSSF,
+2. Extend Maradona, Ronaldo Nazário and Ronaldinho club match ledgers from RSSSF,
    club archives and contemporary match sheets.
-4. Backfill Messi and Cristiano before 2012 and reconcile the structured feed
+3. Backfill Messi and Cristiano before 2012 and reconcile the structured feed
    against club and federation season totals.
-5. Link appearances to competition editions to calculate entered/won shares.
+4. Link appearances to competition editions to calculate entered/won shares.
 
 ## Release gate for the public charts
 
-The fixture warning should remain until the interface becomes coverage-aware.
-Each plotted metric must declare whether its denominator is match-level,
-season-level, or title-list coverage and must disable exact-age or win-rate views
-when the required match dates/results are absent.
+The interface is now coverage-aware and loads sourced records. It states that
+club age curves use season endpoints, while national-team inputs originate in
+match ledgers. Win-rate views remain disabled for mixed club/national universes
+until historical club results are complete.

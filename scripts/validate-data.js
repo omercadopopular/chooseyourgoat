@@ -1,30 +1,27 @@
 import { readFile } from "node:fs/promises";
 
-const data = JSON.parse(await readFile(new URL("../data/players.json", import.meta.url)));
+const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
 const errors = [];
-const ids = new Set();
-if (!data.meta?.isFixture) errors.push("Prototype data must retain isFixture=true until audited replacement.");
-if (data.players?.length !== 6) errors.push("Expected exactly six prototype players.");
+const expected = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
+const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
-for (const player of data.players ?? []) {
-  if (ids.has(player.id)) errors.push(`Duplicate player id: ${player.id}`);
-  ids.add(player.id);
-  if (!player.name || !player.country || !Number.isFinite(player.startAge)) errors.push(`Incomplete identity: ${player.id}`);
-  if (!/^#[0-9a-f]{6}$/i.test(player.color)) errors.push(`Invalid color: ${player.id}`);
-  for (const [index, row] of player.seasons.entries()) {
-    if (!Array.isArray(row) || row.length !== 8) errors.push(`${player.id} season ${index + 1}: expected eight fields`);
-    if (row.some(value => !Number.isInteger(value) || value < 0)) errors.push(`${player.id} season ${index + 1}: values must be nonnegative integers`);
-    const [apps, goals, assists, wins, tournaments, clubTournaments, clubWeight, won] = row;
-    if (wins > apps) errors.push(`${player.id} season ${index + 1}: wins exceed appearances`);
-    if (clubTournaments > tournaments || won > tournaments) errors.push(`${player.id} season ${index + 1}: invalid tournament counts`);
-    if (clubWeight < 1 || clubWeight > 5) errors.push(`${player.id} season ${index + 1}: club allocation weight outside 1–5`);
-    if (goals > apps * 2 || assists > apps * 2) errors.push(`${player.id} season ${index + 1}: implausible fixture rate`);
+if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
+if (data.meta.dataCutoff !== "2025-12-31") errors.push("unexpected data cutoff");
+if (JSON.stringify(data.players.map(player => player.id)) !== JSON.stringify(expected)) errors.push("six-player roster mismatch");
+
+for (const player of data.players) {
+  if (!player.observations.length) errors.push(`${player.id}: no observations`);
+  for (const row of player.observations) {
+    if (!buckets.has(row.bucket)) errors.push(`${player.id}: unknown bucket ${row.bucket}`);
+    if (row.appearances < 0 || row.goals < 0) errors.push(`${player.id}: negative observation`);
+    if (row.goals > row.appearances * 6) errors.push(`${player.id}: implausible goal ratio`);
   }
-  for (const key of ["goals", "results", "assists"]) if (player.coverage[key] < 0 || player.coverage[key] > 100) errors.push(`${player.id}: invalid ${key} coverage`);
+  for (const title of player.titles) if (!buckets.has(title.bucket)) errors.push(`${player.id}: unknown title bucket ${title.bucket}`);
 }
 
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);
 }
-console.log(`Validated ${data.players.length} players and ${data.players.reduce((n,p)=>n+p.seasons.length,0)} season fixtures.`);
+
+console.log(`Validated ${data.players.length} players, ${data.players.reduce((sum, player) => sum + player.observations.length, 0)} web observations and ${data.players.reduce((sum, player) => sum + player.titles.length, 0)} titles.`);

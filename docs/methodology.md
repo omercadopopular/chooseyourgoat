@@ -2,8 +2,8 @@
 
 ## Unit of comparison
 
-The product compares documented football records, not a source-imposed class
-called “official.” Every record has a team context, named competition, mapped
+The product compares documented football records through user-selected named
+competition families. Every record has a team context, named competition, mapped
 competition family, seniority, source, and source granularity. Users construct
 their comparison universe by selecting families.
 
@@ -24,11 +24,11 @@ unless the interface exposes the finer controls.
 - Goals per game = selected goals / selected appearances.
 - Marginal season rate = goals in that season / appearances in that season.
 - Cumulative rate at appearance *n* = goals through appearance *n* / *n*.
-- Cumulative rate by age uses exact match dates where available. A season-level
-  source cannot support exact age curves and must be labelled as approximate or
-  omitted from that view.
-- Match win share = selected appearances in team wins / selected appearances.
-- Tournament win share = entered-and-won editions / entered editions.
+- Cumulative rate by age is plotted at calendar-year or season endpoints in the
+  six-player web bundle. The underlying national ledger retains exact dates;
+  historical club aggregates cannot support match-by-match age curves.
+- Cumulative titles = selected championship editions listed in the honours
+  source through that age or career season.
 
 Penalty-shootout kicks are not player goals. A match result retains regulation
 or extra-time W/D/L separately from shootout advancement when the source offers
@@ -52,8 +52,10 @@ marked.
 
 ## Provenance and uncertainty
 
-Season aggregates, goal events, appearance ledgers, and title lists are never
+Season aggregates, goal events, appearance ledgers, and title lists are not
 summed merely because they share a player. They overlap and represent different
-views. Every output row retains a URL and granularity. Conflicting sources
-should be stored as parallel assertions with a discrepancy identifier and a
-written explanation, not silently resolved.
+views. The generated web bundle combines non-overlapping club aggregates,
+senior national-team ledgers, and youth/Olympic aggregates. Pelé's explicitly
+documented bridge rows reconcile the detailed table to RSSSF's broader
+1,413-match/1,324-goal universe and are marked aggregate-only. Every canonical
+output row retains a URL and granularity.

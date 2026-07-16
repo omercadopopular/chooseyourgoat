@@ -1,65 +1,62 @@
 export const metricLabels = {
   goals: "Cumulative goals",
   goalsPerGame: "Cumulative goals / game",
-  winShare: "Match win share",
-  trophyShare: "Tournament win share"
+  marginalGoalsPerGame: "Goals / game in period",
+  titles: "Cumulative titles won"
 };
 
-const sum = (rows, key) => rows.reduce((total, row) => total + row[key], 0);
+const dayMs = 86_400_000;
 
-export function expandPlayer(player) {
-  const keys = ["appearances", "goals", "assists", "wins", "tournaments", "clubTournaments", "clubWeight", "tournamentsWon"];
-  return player.seasons.map((tuple, index) => ({
-    ...Object.fromEntries(keys.map((key, i) => [key, tuple[i]])),
-    careerSeason: index + 1,
-    age: +(player.startAge + index).toFixed(1)
-  }));
+function ageAtYearEnd(born, year) {
+  return +((Date.parse(`${year}-12-31`) - Date.parse(born)) / dayMs / 365.2425).toFixed(2);
 }
 
-function applyUniverse(row, universe) {
-  if (universe === "all") return row;
-  const clubShare = Math.min(0.9, Math.max(0.7, 0.65 + row.clubWeight * 0.05));
-  const share = universe === "club" ? clubShare : 1 - clubShare;
-  return {
-    ...row,
-    appearances: Math.round(row.appearances * share),
-    goals: Math.round(row.goals * (universe === "club" ? share : Math.min(0.45, share + 0.08))),
-    assists: Math.round(row.assists * share),
-    wins: Math.round(row.wins * share),
-    tournaments: universe === "club" ? row.clubTournaments : row.tournaments - row.clubTournaments,
-    tournamentsWon: Math.min(universe === "club" ? row.tournamentsWon : Math.round(row.tournamentsWon * .35), universe === "club" ? row.clubTournaments : row.tournaments - row.clubTournaments)
-  };
-}
-
-export function buildSeries(player, { metric = "goals", axis = "age", universe = "all" } = {}) {
-  const rows = expandPlayer(player).map(row => applyUniverse(row, universe));
-  return rows.map((row, index) => {
-    const history = rows.slice(0, index + 1);
-    const appearances = sum(history, "appearances");
-    const goals = sum(history, "goals");
-    const assists = sum(history, "assists");
-    const wins = sum(history, "wins");
-    const tournaments = sum(history, "tournaments");
-    const tournamentsWon = sum(history, "tournamentsWon");
+export function buildSeries(player, { metric = "goals", axis = "age", buckets = [] } = {}) {
+  const selected = new Set(buckets);
+  const observations = player.observations.filter(row => selected.has(row.bucket));
+  const titles = player.titles.filter(row => selected.has(row.bucket));
+  const allYears = [...player.observations.map(row => +row.period_end.slice(0, 4)), ...player.titles.map(row => row.year)];
+  const careerStart = Math.min(...allYears);
+  const byYear = new Map();
+  for (const row of observations) {
+    const year = +row.period_end.slice(0, 4);
+    const value = byYear.get(year) || { year, appearances: 0, goals: 0, titles: 0 };
+    value.appearances += row.appearances;
+    value.goals += row.goals;
+    byYear.set(year, value);
+  }
+  for (const title of titles) {
+    const value = byYear.get(title.year) || { year: title.year, appearances: 0, goals: 0, titles: 0 };
+    value.titles += 1;
+    byYear.set(title.year, value);
+  }
+  let appearances = 0, goals = 0, titleCount = 0;
+  return [...byYear.values()].sort((a, b) => a.year - b.year).map(row => {
+    appearances += row.appearances;
+    goals += row.goals;
+    titleCount += row.titles;
+    const age = ageAtYearEnd(player.born, row.year);
+    const careerSeason = row.year - careerStart + 1;
     const values = {
       goals,
       goalsPerGame: appearances ? goals / appearances : null,
-      assists,
-      winShare: appearances ? wins / appearances : null,
-      trophyShare: tournaments ? tournamentsWon / tournaments : null
+      marginalGoalsPerGame: row.appearances ? row.goals / row.appearances : null,
+      titles: titleCount
     };
-    return { x: axis === "appearances" ? appearances : row[axis], y: values[metric], appearances, goals, assists, wins, tournaments, tournamentsWon, age: row.age, careerSeason: row.careerSeason };
-  }).filter(point => point.x > 0 && point.y !== null);
+    const x = axis === "appearances" ? appearances : axis === "careerSeason" ? careerSeason : age;
+    return { x, y: values[metric], year: row.year, age, careerSeason, appearances, goals, titles: titleCount, periodAppearances: row.appearances, periodGoals: row.goals };
+  }).filter(point => point.x >= 0 && point.y !== null && (metric === "titles" || point.appearances > 0));
 }
 
 export function commonEndpoint(seriesList) {
-  if (!seriesList.length) return null;
-  return Math.min(...seriesList.map(series => Math.max(...series.map(point => point.x))));
+  const populated = seriesList.filter(series => series.length);
+  if (!populated.length) return null;
+  return Math.min(...populated.map(series => Math.max(...series.map(point => point.x))));
 }
 
 export function trimToCommon(seriesList) {
   const endpoint = commonEndpoint(seriesList);
-  return seriesList.map(series => series.filter(point => point.x <= endpoint));
+  return endpoint == null ? seriesList : seriesList.map(series => series.filter(point => point.x <= endpoint));
 }
 
 export function lastAtOrBefore(series, endpoint) {
@@ -68,7 +65,6 @@ export function lastAtOrBefore(series, endpoint) {
 
 export function formatMetric(value, metric) {
   if (value == null) return "N/A";
-  if (["winShare", "trophyShare"].includes(metric)) return `${(value * 100).toFixed(1)}%`;
-  if (metric === "goalsPerGame") return value.toFixed(2);
+  if (["goalsPerGame", "marginalGoalsPerGame"].includes(metric)) return value.toFixed(2);
   return Math.round(value).toLocaleString("en-US");
 }

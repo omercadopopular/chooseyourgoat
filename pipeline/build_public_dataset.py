@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RAW = Path(os.environ.get("CHOOSEYOURGOAT_RAW_DIR", ROOT / "data" / "raw"))
 OUT = ROOT / "data" / "curated"
 OUT.mkdir(parents=True, exist_ok=True)
+DATA_CUTOFF = date(2025, 12, 31)
 
 PLAYERS = {
     "pele": {"name": "Pelé", "birth": "1940-10-23", "wiki": "pele", "club_table": 5, "national_table": 7},
@@ -32,6 +33,30 @@ PLAYERS = {
     "ronaldo": {"name": "Ronaldo Nazário", "birth": "1976-09-18", "wiki": "ronaldo", "club_table": 2, "national_table": 3},
     "ronaldinho": {"name": "Ronaldinho", "birth": "1980-03-21", "wiki": "ronaldinho", "club_table": 3, "national_table": 4},
     "maradona": {"name": "Diego Maradona", "birth": "1960-10-30", "wiki": "maradona", "club_table": 3, "national_table": 4},
+}
+
+RSSSF_NATIONAL_LEDGERS = {
+    "pele": ("pele_rsssf_intl.html", 92, 77, "Brazil"),
+    "messi": ("messi_rsssf_intl.html", 196, 115, "Argentina"),
+    "cristiano": ("cristiano_rsssf_intl.html", 226, 143, "Portugal"),
+    "ronaldo": ("ronaldo_rsssf_intl.html", 98, 62, "Brazil"),
+    "ronaldinho": ("ronaldinho_rsssf_intl.html", 97, 33, "Brazil"),
+    "maradona": ("maradona_intl.html", 91, 34, "Argentina"),
+}
+
+# Ten RSSSF rows lost their venue/opponent delimiter in the rendered fixed-width
+# text. Values below are direct transcriptions of those rows, keyed by cap.
+LEDGER_LOCATION_FIXES = {
+    ("messi",56):("East Rutherford","United States","1-1","Friendly"),
+    ("messi",85):("Buenos Aires","Trinidad/Tobago","3-0","Friendly"),
+    ("messi",126):("Nizhny Novgorod","Croatia","0-3","World Cup"),
+    ("messi",127):("Sankt Peterburg","Nigeria","2-1","World Cup"),
+    ("messi",174):("Stgo. d. Estero","Curacao","7-0","Friendly"),
+    ("ronaldo",46):("Ciudad del Este","Venezuela","7-0","Copa America"),
+    ("ronaldo",47):("Ciudad del Este","Mexico","2-1","Copa America"),
+    ("ronaldo",48):("Ciudad del Este","Chile","1-0","Copa America"),
+    ("ronaldo",49):("Ciudad del Este","Argentina","2-1","Copa America"),
+    ("ronaldo",50):("Ciudad del Este","Mexico","2-0","Copa America"),
 }
 
 SOURCE_URLS = {
@@ -64,6 +89,18 @@ def number(value):
     # source text in the output and compute the explicitly stated sum.
     return sum(map(int, values)) if "+" in value else int(values[0])
 
+def season_end_year(value):
+    text=clean(value)
+    years=re.findall(r"(?:19|20)\d{2}",text)
+    if not years: return None
+    start=int(years[0])
+    short=re.search(r"(?:19|20)\d{2}\s*[-/]\s*(\d{2})(?!\d)",text)
+    if short:
+        end=(start//100)*100+int(short.group(1))
+        if end<start: end+=100
+        return end
+    return int(years[-1])
+
 def flatten_columns(df):
     if not isinstance(df.columns, pd.MultiIndex):
         df.columns = [clean(c) for c in df.columns]
@@ -79,17 +116,17 @@ def flatten_columns(df):
     return df
 
 def bucket_family(bucket, division=""):
-    b=(bucket+" "+division).lower()
-    if "campeonato paulista" in b or "regional" in b or "state league" in b or "rio-são paulo" in b:
-        return "regional_league"
-    if "league" in b or "brasileiro" in b or "liga" in b or "serie a" in b:
-        return "national_league"
-    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b:
-        return "continental_federation_cup"
+    b=bucket.lower()
     if "intercontinental" in b or "club world" in b:
         return "intercontinental_federation_cup"
+    if "campeonato paulista" in b or "regional" in b or "state league" in b or "rio-são paulo" in b:
+        return "regional_league"
+    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b:
+        return "continental_federation_cup"
     if "cup" in b or "domestic" in b:
         return "domestic_cup"
+    if b=="league" or "brasileiro" in b or "liga" in b or "serie a" in b:
+        return "national_league"
     if "other" in b or "postseason" in b:
         return "all_other_club"
     return "unclassified_club"
@@ -115,6 +152,7 @@ def parse_club_stats(player_id, cfg):
         for _,r in df.iterrows():
             club=clean(r[club_col]); season=clean(r[season_col])
             if not season or season.lower()=="total" or "total" in club.lower(): continue
+            if season_end_year(season) and season_end_year(season)>DATA_CUTOFF.year: continue
             division=""
             for c in df.columns:
                 if c.endswith("Division"): division=clean(r[c])
@@ -132,7 +170,7 @@ def parse_club_stats(player_id, cfg):
                 apps=number(apps_text); goals=number(goals_text)
                 if apps==0 and goals==0: continue
                 seniority="reserve" if re.search(r"\b(B|C|reserves?|youth)\b",club,re.I) else "senior"
-                result.append({"player_id":player_id,"player_name":cfg["name"],"team_context":"club","team":club,"season":season,"source_bucket":base,"competition_name":division if "league" in base.lower() and division else base,"competition_family":bucket_family(base,division),"seniority":seniority,"appearances":apps,"goals":goals,"appearances_source_text":apps_text,"goals_source_text":goals_text,"source_id":f"wikipedia_{player_id}_career_stats","source_url":SOURCE_URLS[player_id],"source_granularity":"season_bucket"})
+                result.append({"player_id":player_id,"player_name":cfg["name"],"team_context":"club","team":club,"season":season,"source_bucket":base,"competition_name":division if base.lower()=="league" and division else base,"competition_family":bucket_family(base,division),"seniority":seniority,"appearances":apps,"goals":goals,"appearances_source_text":apps_text,"goals_source_text":goals_text,"source_id":f"wikipedia_{player_id}_career_stats","source_url":SOURCE_URLS[player_id],"source_granularity":"season_bucket"})
     return result
 
 def parse_national_year_stats(player_id,cfg):
@@ -144,6 +182,7 @@ def parse_national_year_stats(player_id,cfg):
     for _,r in df.iterrows():
         team=clean(r[team_col]); year=clean(r[year_col])
         if year.lower()=="total" or not re.search(r"\d{4}",year): continue
+        if season_end_year(year)>DATA_CUTOFF.year: continue
         if any(c.startswith("Competitive") for c in df):
             contexts=[("Competitive","national_team_competitive_unallocated"),("Friendly","national_team_friendlies")]
         elif any(c.startswith("Tournament") for c in df):
@@ -166,13 +205,64 @@ def classify_national_competition(name):
     n=clean(name).lower()
     if "world cup qual" in n: return "national_team_world_cup_qualification"
     if "world cup" in n: return "national_team_world_cup_finals"
-    if any(x in n for x in ["confederations cup","finalissima","artemio franchi","copa de oro","panamerican championship"]): return "national_team_intercontinental_championship_finals"
-    if any(x in n for x in ["copa américa","copa america","uefa euro","european championship","gold cup","asian cup","africa cup of nations","ofc nations"]):
+    if any(x in n for x in ["confederations cup","confederarions cup","finalissima","artemio franchi","copa de oro","panamerican championship","conmebol-uefa"]): return "national_team_intercontinental_championship_finals"
+    if any(x in n for x in ["copa américa","copa america","uefa euro","european championship","european champ","european ch.","gold cup","asian cup","africa cup of nations","ofc nations"]):
         return "national_team_continental_championship_finals" if "qual" not in n else "national_team_continental_championship_qualification"
     if "nations league" in n: return "national_team_continental_nations_league"
     if any(x in n for x in ["olympic","pre-olympic"]): return "national_team_olympic"
     if n in {"friendly","nan",""} or any(x in n for x in ["friendly","anniversary"]): return "national_team_friendlies"
     return "national_team_other"
+
+def parse_rsssf_national_ledger(player_id):
+    """Parse RSSSF's chronological cap ledger into appearances and goal events."""
+    from lxml import html
+    filename,expected_caps,expected_goals,team=RSSSF_NATIONAL_LEDGERS[player_id]
+    page=html.parse(RAW/filename)
+    blocks=page.xpath('//pre')
+    date_pattern=r"(\d{1,2}\s*[-/]\s*\d{1,2}\s*[-/]\s*\d{2})"
+    candidates=[]
+    for block in blocks:
+        rows=[]
+        for line in block.text_content().splitlines():
+            match=re.match(r"^\s*(\d+)\s+(.*?)\s*"+date_pattern+r"\s{1,}(.+?)\s*$",line)
+            if match and int(match.group(1))<=expected_caps: rows.append((line,match))
+        candidates.append(rows)
+    source_rows=max(candidates,key=len)
+    appearances=[]; events=[]; last_cumulative=0; event_number=0
+    for line,match in source_rows:
+        cap=int(match.group(1)); prefix=match.group(2).strip()
+        values=[int(value) for value in re.findall(r"\d+",prefix)]
+        if len(values)>=2:
+            match_goals,cumulative=values[-2],values[-1]
+        elif len(values)==1:
+            cumulative=values[0]; match_goals=max(0,cumulative-last_cumulative)
+        else:
+            cumulative=last_cumulative; match_goals=0
+        last_cumulative=cumulative
+        raw_date=re.sub(r"\s+","",match.group(3)).replace('/','-')
+        day,month,yy=map(int,raw_date.split('-'))
+        year=1900+yy if yy>=40 else 2000+yy
+        iso=f"{year:04d}-{month:02d}-{day:02d}"
+        if (player_id,cap) in LEDGER_LOCATION_FIXES:
+            venue,opponent,result,competition=LEDGER_LOCATION_FIXES[(player_id,cap)]
+        else:
+            parts=[clean(part) for part in re.split(r"\t+|\s{2,}",match.group(4).strip()) if clean(part)]
+            result_index=next((index for index,value in enumerate(parts) if re.match(r"^\d+\s*[-x]\s*\d+",value)),None)
+            if result_index is None or result_index<2: continue
+            venue=" ".join(parts[:result_index-1]); opponent=parts[result_index-1]
+            result=parts[result_index]; competition=" ".join(parts[result_index+1:]) or "Friendly"
+        family=classify_national_competition(competition)
+        scores=[int(value) for value in re.findall(r"\d+",result)[:2]]
+        outcome='W' if scores[0]>scores[1] else ('D' if scores[0]==scores[1] else 'L')
+        slug={'pele':'pele-intlg','messi':'messi-intlg','cristiano':'cronaldo-intlg','ronaldo':'ronaldo-intlg','ronaldinho':'ronaldinho-intlg','maradona':'maradona-intl'}[player_id]
+        base={"player_id":player_id,"player_name":PLAYERS[player_id]["name"],"team":team,"cap":cap,"date":raw_date,"date_iso":iso,"venue":venue,"opponent":opponent,"result":result,"outcome":outcome,"competition_name":competition,"competition_family":family,"source_id":f"rsssf_{player_id}_international_appearances","source_url":f"https://www.rsssf.org/miscellaneous/{slug}.html"}
+        appearances.append({**base,"goals":match_goals,"cumulative_goals":cumulative,"source_granularity":"appearance"})
+        for goal_in_match in range(1,match_goals+1):
+            event_number+=1
+            events.append({**base,"event_number":event_number,"goal_in_match":goal_in_match,"goals":1,"source_granularity":"goal_event_derived_from_appearance"})
+    if len(appearances)!=expected_caps or sum(row['goals'] for row in appearances)!=expected_goals:
+        raise ValueError(f"{player_id} RSSSF reconciliation failed: {len(appearances)} caps, {sum(row['goals'] for row in appearances)} goals")
+    return appearances,events
 
 def parse_wiki_international_goals(player_id,path,table_index):
     df=pd.read_html(path)[table_index].copy()
@@ -213,6 +303,7 @@ def modern_transfermarkt():
     games=pd.read_csv(RAW/'games.csv.gz',low_memory=False)
     comps=pd.read_csv(RAW/'competitions.csv.gz')
     x=apps[apps.player_id.isin(pids)].merge(games,on='game_id',suffixes=('','_game')).merge(comps,on='competition_id',suffixes=('','_competition'))
+    x=x[pd.to_datetime(x.date).dt.date<=DATA_CUTOFF]
     def family(r):
         st=str(r.sub_type).lower(); typ=str(r.type).lower(); name=str(r['name']).lower()
         if st=='world_cup': return 'national_team_world_cup_finals'
@@ -288,6 +379,104 @@ def title_family(name):
     if any(x in n for x in ['copa del rey','coppa italia','knvb','copa do brasil','copa de la liga','fa cup','league cup']): return 'domestic_cup'
     return 'other_championship'
 
+WEB_TAXONOMY = [
+    {"id":"club","label":"Club goals","children":[
+        {"id":"national_league","label":"National league"},
+        {"id":"continental_federation_cup","label":"Continental federation cup"},
+        {"id":"intercontinental_federation_cup","label":"Intercontinental federation cup"},
+        {"id":"regional_league","label":"Regional league"},
+        {"id":"all_other_club","label":"All other club goals"},
+    ]},
+    {"id":"national_team","label":"National-team goals","children":[
+        {"id":"national_team_world_cup_finals","label":"World Cup finals"},
+        {"id":"national_team_world_cup_qualification","label":"World Cup qualification"},
+        {"id":"national_team_continental_championship_finals","label":"Continental championship finals"},
+        {"id":"national_team_continental_championship_qualification","label":"Continental championship qualification"},
+        {"id":"national_team_intercontinental_championship_finals","label":"Intercontinental championship finals"},
+        {"id":"national_team_continental_nations_league","label":"Continental Nations League"},
+        {"id":"national_team_olympic","label":"Olympic"},
+        {"id":"national_team_friendlies","label":"Friendlies"},
+        {"id":"national_team_other","label":"All other national-team goals"},
+    ]},
+]
+
+WEB_PLAYERS = {
+    "pele":{"shortName":"Pelé","country":"Brazil","color":"#ef6f4d"},
+    "messi":{"shortName":"Messi","country":"Argentina","color":"#7c9cff"},
+    "cristiano":{"shortName":"Cristiano","country":"Portugal","color":"#d8b650"},
+    "ronaldo":{"shortName":"R9","country":"Brazil","color":"#53b98f"},
+    "ronaldinho":{"shortName":"Ronaldinho","country":"Brazil","color":"#ba78d1"},
+    "maradona":{"shortName":"Maradona","country":"Argentina","color":"#e45475"},
+}
+
+# Additive rows needed to bridge the fine Pelé season table to RSSSF's broader
+# 1,413-match/1,324-goal universe. The source gives multi-year spans, so these
+# are placed at the span endpoint and explicitly marked aggregate-only.
+PELE_WEB_BRIDGES = [
+    (1957,"Combined Santos/Vasco",4,6,"all_other_club"),
+    (1959,"Army teams",14,16,"all_other_club"),
+    (1969,"São Paulo selection",15,12,"all_other_club"),
+    (1974,"Santos friendlies and tours",451,449,"all_other_club"),
+    (1974,"RSSSF Santos appearance reconciliation",6,0,"all_other_club"),
+    (1976,"Brazil other matches",4,2,"national_team_other"),
+    (1976,"Brazil other friendlies",45,42,"national_team_friendlies"),
+    (1977,"RSSSF Cosmos canceled-match reconciliation",1,0,"all_other_club"),
+    (1978,"Fluminense guest matches",2,0,"all_other_club"),
+    (1979,"Flamengo guest match",1,0,"all_other_club"),
+    (1987,"Other representative selections",5,2,"all_other_club"),
+    (1990,"Other teams",6,8,"all_other_club"),
+]
+
+def user_bucket(family):
+    if family in {child['id'] for group in WEB_TAXONOMY for child in group['children']}: return family
+    if family in {'domestic_cup','domestic_super_cup','domestic_super_cup_or_shield','all_other_club','unclassified_club','club_competition_aggregate_unallocated'}: return 'all_other_club'
+    if family in {'regional_league_or_cup','regional_competition'}: return 'regional_league'
+    if family.startswith('national_team_'): return 'national_team_other'
+    return 'all_other_club'
+
+def title_bucket(row):
+    family=row['competition_family']; name=row['competition_name'].lower(); team=row['team'].lower()
+    if 'olympic' in name: return 'national_team_olympic'
+    if family.startswith('national_team_'): return user_bucket(family)
+    if any(token in team for token in ['argentina','brazil','portugal']): return 'national_team_other'
+    return user_bucket(family)
+
+def build_web_bundle(season,national_appearances,title_rows,coverage):
+    season=pd.DataFrame(season); national=pd.DataFrame(national_appearances); titles=pd.DataFrame(title_rows)
+    players=[]
+    for pid,cfg in PLAYERS.items():
+        birth=pd.Timestamp(cfg['birth'])
+        observations=[]
+        club=season[(season.player_id==pid)&(season.team_context=='club')]
+        for _,row in club.iterrows():
+            end_year=season_end_year(row.season)
+            end_date=pd.Timestamp(f'{end_year}-06-30' if re.search(r'\d{4}\s*[-/]\s*\d{2}',str(row.season)) else f'{end_year}-12-31')
+            observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'club','bucket':user_bucket(row.competition_family),'competition_family':row.competition_family,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
+        country=national[national.player_id==pid].copy()
+        country['year']=pd.to_datetime(country.date_iso).dt.year
+        for (year,family),rows in country.groupby(['year','competition_family']):
+            end_date=pd.Timestamp(f'{year}-12-31')
+            observations.append({'period':str(year),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team','bucket':user_bucket(family),'competition_family':family,'team':rows.team.iloc[0],'competition_name':family,'appearances':int(len(rows)),'goals':int(rows.goals.sum()),'wins':int((rows.outcome=='W').sum()),'source_granularity':'calendar_year_from_match_ledger'})
+        youth=season[(season.player_id==pid)&(season.team_context=='national_team')&(season.seniority!='senior')]
+        for _,row in youth.iterrows():
+            year=season_end_year(row.season); end_date=pd.Timestamp(f'{year}-12-31')
+            bucket='national_team_olympic' if re.search(r'U23|Olympic',row.team,re.I) else 'national_team_other'
+            observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team','bucket':bucket,'competition_family':bucket,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
+        if pid=='pele':
+            for year,label,apps,goals,bucket in PELE_WEB_BRIDGES:
+                end_date=pd.Timestamp(f'{year}-12-31')
+                observations.append({'period':str(year),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team' if bucket.startswith('national_team_') else 'club','bucket':bucket,'competition_family':bucket,'team':label,'competition_name':label,'appearances':apps,'goals':goals,'wins':None,'source_granularity':'rsssf_multi_year_aggregate_bridge','aggregate_only':True})
+        title_events=[]
+        for _,row in titles[titles.player_id==pid].iterrows():
+            year=season_end_year(row.edition)
+            end_date=pd.Timestamp(f'{year}-12-31')
+            title_events.append({'year':year,'date':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'bucket':title_bucket(row),'competition_name':row.competition_name,'team':row.team,'edition':str(row.edition)})
+        player_coverage=next(item for item in coverage if item['player_id']==pid)
+        info=WEB_PLAYERS[pid]
+        players.append({'id':pid,'name':cfg['name'],**info,'born':cfg['birth'],'years':f"{player_coverage['season_first']}–{player_coverage['season_last']}",'observations':sorted(observations,key=lambda row:(row['period_end'],row['team_context'],row['bucket'])),'titles':sorted(title_events,key=lambda row:row['date']),'coverage':{'club':'Career-spanning season/competition aggregates','national':f"{player_coverage['national_appearance_rows']} complete senior caps",'titles':f"{player_coverage['titles']} listed championship editions"}})
+    bundle={'meta':{'dataCutoff':DATA_CUTOFF.isoformat(),'isFixture':False,'notice':'Career-spanning sourced aggregates. Exact match dates/results are complete for senior national teams; historical club observations are season-level.'},'taxonomy':WEB_TAXONOMY,'players':players}
+    (ROOT/'data'/'web_dataset.json').write_text(json.dumps(bundle,ensure_ascii=False,separators=(',',':')))
+
 def main():
     season=[]
     for pid,cfg in PLAYERS.items():
@@ -295,16 +484,13 @@ def main():
         season += parse_national_year_stats(pid,cfg)
     pd.DataFrame(season).to_csv(OUT/'season_competition.csv',index=False)
 
-    intl=[]
-    intl += parse_wiki_international_goals('messi',RAW/'messi_intl.html',1)
-    intl += parse_wiki_international_goals('cristiano',RAW/'cristiano_intl.html',2)
-    intl += parse_wiki_international_goals('pele',RAW/'pele_intl.html',1)
-    intl += parse_wiki_international_goals('ronaldo',RAW/'ronaldo.html',5)
-    intl += parse_wiki_international_goals('ronaldinho',RAW/'ronaldinho.html',5)
-    maradona_appearances,maradona_goals=parse_maradona_rsssf()
-    intl += maradona_goals
+    national_appearances=[]; intl=[]
+    for pid in PLAYERS:
+        appearances,events=parse_rsssf_national_ledger(pid)
+        national_appearances+=appearances; intl+=events
     pd.DataFrame(intl).to_csv(OUT/'national_team_goal_events.csv',index=False)
-    pd.DataFrame(maradona_appearances).to_csv(OUT/'national_team_appearances_rsssf.csv',index=False)
+    pd.DataFrame(national_appearances).to_csv(OUT/'national_team_appearances.csv',index=False)
+    pd.DataFrame([row for row in national_appearances if row['player_id']=='maradona']).to_csv(OUT/'national_team_appearances_rsssf.csv',index=False)
 
     modern=modern_transfermarkt()
     modern.to_csv(OUT/'modern_match_appearances.csv',index=False)
@@ -320,6 +506,7 @@ def main():
         TITLES['cristiano'].append((clean(r['Club / national team']),comp,clean(r['Season / year'])))
     for pid,items in TITLES.items():
         for team,comp,edition in items:
+            if season_end_year(edition) and season_end_year(edition)>DATA_CUTOFF.year: continue
             title_rows.append({'player_id':pid,'player_name':PLAYERS[pid]['name'],'team':team,'competition_name':comp,'edition':edition,'competition_family':title_family(comp),'won':1,'participation_status':'listed_in_player_honours','source_id':f'wikipedia_{pid}_honours','source_url':SOURCE_URLS[pid]})
     pd.DataFrame(title_rows).to_csv(OUT/'titles.csv',index=False)
 
@@ -329,8 +516,9 @@ def main():
         m=modern[modern.player_id==pid]
         player_seasons=s.loc[s.player_id==pid,'season'].astype(str).tolist()
         season_key=lambda value:int(re.search(r'\d{4}',value).group())
-        cov.append({'player_id':pid,'player_name':cfg['name'],'season_rows':int((s.player_id==pid).sum()),'season_first':min(player_seasons,key=season_key) if player_seasons else None,'season_last':max(player_seasons,key=season_key) if player_seasons else None,'national_goal_events':int(i.loc[i.player_id==pid,'goals'].sum()),'national_goal_source_granularity':'goal_event','national_appearance_rows':91 if pid=='maradona' else 0,'modern_match_appearances':len(m),'modern_first':str(m.date.min()) if len(m) else None,'modern_last':str(m.date.max()) if len(m) else None,'titles':sum(1 for x in title_rows if x['player_id']==pid)})
-    (OUT/'coverage.json').write_text(json.dumps({'generated':date.today().isoformat(),'scope_note':'Users select named competition families; source treatments remain metadata.','players':cov},indent=2,ensure_ascii=False))
+        cov.append({'player_id':pid,'player_name':cfg['name'],'season_rows':int((s.player_id==pid).sum()),'season_first':min(player_seasons,key=season_key) if player_seasons else None,'season_last':max(player_seasons,key=season_key) if player_seasons else None,'national_goal_events':int(i.loc[i.player_id==pid,'goals'].sum()),'national_goal_source_granularity':'goal_event','national_appearance_rows':sum(1 for row in national_appearances if row['player_id']==pid),'modern_match_appearances':len(m),'modern_first':str(m.date.min()) if len(m) else None,'modern_last':str(m.date.max()) if len(m) else None,'titles':sum(1 for x in title_rows if x['player_id']==pid)})
+    (OUT/'coverage.json').write_text(json.dumps({'generated':date.today().isoformat(),'data_cutoff':DATA_CUTOFF.isoformat(),'scope_note':'Users select named competition families; source treatments remain metadata.','players':cov},indent=2,ensure_ascii=False))
+    build_web_bundle(season,national_appearances,title_rows,cov)
     print(json.dumps(cov,indent=2,ensure_ascii=False))
 
 if __name__=='__main__': main()

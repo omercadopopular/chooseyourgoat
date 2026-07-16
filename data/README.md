@@ -3,17 +3,16 @@
 The production research data are generated into `data/curated/` by
 `pipeline/build_public_dataset.py`.
 
-The model does not contain an `official` flag. Every observation is classified
-by team context, competition family, format, seniority and source treatment.
-Users choose the comparison universe.
+Every observation is classified by team context, competition family, format,
+seniority and source treatment. Users choose the comparison universe.
 
 ## Current public sources
 
 - Wikipedia career-statistics, international-goal and honours tables, licensed
   under CC BY-SA. These tables consolidate citations to clubs, federations,
   RSSSF and specialist databases.
-- RSSSF chronological international records, currently used directly for
-  Maradona and as a reconciliation source for the other five players.
+- RSSSF chronological international records, used directly for all six senior
+  national-team appearance ledgers and the broad Pelé reconciliation.
 - `dcaribou/transfermarkt-datasets`, CC0, used for match-level Messi and
   Cristiano Ronaldo coverage from 2012 onward.
 
@@ -22,8 +21,10 @@ Users choose the comparison universe.
 - `season_competition.csv`: player-season-source-bucket appearances and goals.
 - `national_team_goal_events.csv`: dated national-team goals with competition
   taxonomy.
-- `national_team_appearances_rsssf.csv`: the 91-row Maradona national-team
-  appearance ledger; its 34 goals reconcile to the goal-event table.
+- `national_team_appearances.csv`: complete senior national-team RSSSF ledgers
+  for all six players through 31 December 2025. Every cap and goal reconciles.
+- `national_team_appearances_rsssf.csv`: compatibility extract containing the
+  91-row Maradona portion of the unified appearance table.
 - `modern_match_appearances.csv`: modern match-level appearances, results and
   goals where the structured source has coverage.
 - `historical_aggregate_assertions.csv`: parallel multi-year source assertions,
@@ -35,6 +36,8 @@ Users choose the comparison universe.
 - `competition_taxonomy.csv`: machine-readable selectable families and their
   mapping to the user-facing buckets.
 - `sources.csv`: provenance, retrieval date, license/terms and caveats.
+- `../web_dataset.json`: generated browser bundle used by the live chart; it
+  contains only non-overlapping observations and the selectable hierarchy.
 
 These tables are a research release, not a claim of perfect completeness.
 Every row retains its source and granularity.
@@ -43,4 +46,6 @@ Do not add aggregate rows from `season_competition.csv` to match-level rows.
 They are alternative views with overlapping coverage. In particular, the
 historical season table has broad career coverage but does not enumerate all
 club friendlies and tours; the modern match table is richer but only covers
-Messi and Cristiano Ronaldo from 2012 in the current CC0 snapshot.
+  Messi and Cristiano Ronaldo from 2012 while they remain covered by the
+  source competitions. It ends in 2023 and 2022 respectively and is not their
+  complete modern career record.

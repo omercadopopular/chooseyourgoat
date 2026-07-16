@@ -33,8 +33,8 @@
       </section>
 
       <aside class="prototype-note" role="note">
-        <strong>Prototype dataset</strong>
-        <span>The current numbers are illustrative fixtures for testing the interface—not verified historical totals.</span>
+        <strong>Sourced research release · cutoff 31 December 2025</strong>
+        <span>Career-spanning club aggregates and complete senior national-team ledgers. Historical club data are plotted at season endpoints.</span>
       </aside>
 
       <section class="compare-section" id="compare">
@@ -48,13 +48,26 @@
 
         <div class="player-grid" id="player-grid" aria-label="Player selection"></div>
 
+        <section class="restriction-panel" aria-labelledby="restriction-title">
+          <div class="restriction-heading">
+            <div><span class="kicker">INCLUDE IN THE CHART</span><h3 id="restriction-title">Choose which goals count</h3></div>
+            <div class="restriction-presets" aria-label="Filter presets">
+              <button type="button" data-preset="all">All categories</button>
+              <button type="button" data-preset="club">Club only</button>
+              <button type="button" data-preset="national_team">National team only</button>
+            </div>
+          </div>
+          <div class="restriction-groups" id="restriction-groups"></div>
+          <p class="restriction-summary" id="restriction-summary"></p>
+        </section>
+
         <div class="control-panel">
           <label>Measure
             <select id="metric-select">
               <option value="goals">Cumulative goals</option>
               <option value="goalsPerGame">Cumulative goals / game</option>
-              <option value="winShare">Match win share</option>
-              <option value="trophyShare">Tournament win share</option>
+              <option value="marginalGoalsPerGame">Goals / game in period</option>
+              <option value="titles">Cumulative titles won</option>
             </select>
           </label>
           <label>Normalize by
@@ -62,13 +75,6 @@
               <option value="age">Age</option>
               <option value="appearances">Appearances</option>
               <option value="careerSeason">Career season</option>
-            </select>
-          </label>
-          <label>Universe
-            <select id="universe-select">
-              <option value="all">All documented categories</option>
-              <option value="club">Club only</option>
-              <option value="national">National team only</option>
             </select>
           </label>
           <label class="common-toggle">
@@ -95,16 +101,16 @@
         <div class="principles">
           <article><span>01</span><h3>Common support</h3><p>Career comparisons stop at the latest age or appearance count observed for every selected player.</p></article>
           <article><span>02</span><h3>You choose the universe</h3><p>Named competition families stay separate. No source-defined status decides which matches count.</p></article>
-          <article><span>03</span><h3>Trophies need denominators</h3><p>A tournament record is shown as editions won over editions entered, with exact counts beside the percentage.</p></article>
+          <article><span>03</span><h3>Sources stay visible</h3><p>National-team points come from complete match ledgers. Historical club points use season-by-competition aggregates and are labelled accordingly.</p></article>
         </div>
       </section>
 
       <section class="coverage-section" id="coverage">
         <div class="section-heading">
           <div><span class="kicker">03 / DATA COVERAGE</span><h2>Trust the gaps, too.</h2></div>
-          <p>The production database will publish field-level coverage and source provenance. This prototype demonstrates the disclosure system.</p>
+          <p>Coverage is stated by field and granularity. Aggregate rows are never silently added to overlapping match-level records.</p>
         </div>
-        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Goals</th><th>Results</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
+        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Club record</th><th>Senior national team</th><th>Titles</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
       </section>
     </main>
 

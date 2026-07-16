@@ -4,7 +4,7 @@ An evidence-first football comparison interface. The six-player prototype includ
 
 ## Current status
 
-The interface and metric engine are functional. `data/players.json` remains an unmistakably labelled UI fixture. A separate reproducible research release now lives in `data/curated/`; it is not yet wired into the public chart while historical match-level coverage is incomplete.
+The public chart is wired to the reproducible research release through `data/web_dataset.json`. It provides hierarchical competition-family filters, normalization by age, appearances or career season, cumulative and marginal goal rates, and filtered title counts. The fixed comparison cutoff is 31 December 2025.
 
 ## Run locally
 
@@ -18,10 +18,10 @@ Open the address printed by `serve`.
 ## Product principles
 
 - Compare players at a common age, appearance count or career season.
-- Never make “official” a data primitive; expose named competition families and let users select the universe.
+- Use named competition families and let users select the comparison universe.
 - Keep national-team finals, qualifiers, intercontinental championships and friendlies separately selectable.
 - Keep national leagues, continental club cups, intercontinental club cups, regional leagues and all other club matches separately selectable.
-- Display tournament wins as numerator and denominator.
+- Keep title editions distinct from individual awards and runner-up finishes.
 - Keep every published statistic traceable to a source row and disclose its granularity.
 
 See [docs/methodology.md](docs/methodology.md) and [docs/data-roadmap.md](docs/data-roadmap.md).
@@ -29,7 +29,8 @@ See [docs/methodology.md](docs/methodology.md) and [docs/data-roadmap.md](docs/d
 ## Repository structure
 
 - `index.html`, `styles.css`, `app.js`: dependency-free static application.
-- `data/players.json`: prototype observations and coverage metadata.
+- `data/web_dataset.json`: generated, coverage-aware browser bundle.
+- `data/players.json`: retained legacy fixture; no longer loaded by the website.
 - `data/curated/`: sourced research tables, taxonomy, coverage and source manifest.
 - `pipeline/`: downloader, extraction build and validation suite.
 - `src/metrics.js`: pure filter, normalization and comparison functions.
@@ -50,4 +51,4 @@ The downloader caches raw inputs in ignored `data/raw/`. The curated tables reta
 
 ## License
 
-Code is MIT licensed. The UI fixture is synthetic and CC0. Curated rows have source-specific terms recorded in `data/curated/sources.csv`; RSSSF does not state an open redistribution license, so its factual extraction requires a terms review before commercial redistribution.
+Code is MIT licensed. Curated rows have source-specific terms recorded in `data/curated/sources.csv`; RSSSF does not state an open redistribution license, so its factual extraction requires a terms review before commercial redistribution.
