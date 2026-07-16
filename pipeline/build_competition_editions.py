@@ -190,7 +190,7 @@ YOUTH = {
 
 BENCH = {
     "cristiano": [("Sporting CP", "Supertaça Cândido de Oliveira", "2002", "all_other_club", "https://en.wikipedia.org/wiki/2002_Superta%C3%A7a_C%C3%A2ndido_de_Oliveira")],
-    "ronaldo": [("Brazil", "World Cup", "1994", "national_team_world_cup_finals", "https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)")],
+    "ronaldo": [("Brazil", "World Cup", "1994", "national_team_world_cup_finals", "https://pt.wikipedia.org/wiki/Final_da_Copa_do_Mundo_FIFA_de_1994")],
 }
 
 
