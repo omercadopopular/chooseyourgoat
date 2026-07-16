@@ -26,6 +26,9 @@ Users choose the comparison universe.
   appearance ledger; its 34 goals reconcile to the goal-event table.
 - `modern_match_appearances.csv`: modern match-level appearances, results and
   goals where the structured source has coverage.
+- `historical_aggregate_assertions.csv`: parallel multi-year source assertions,
+  currently RSSSF's broad Pelé set (1,413 matches, 1,324 goals). These overlap
+  finer tables and cannot support exact-age curves.
 - `titles.csv`: championship editions listed in player honours, excluding
   runner-up and individual awards.
 - `coverage.json`: source coverage by player.

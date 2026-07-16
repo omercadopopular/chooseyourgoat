@@ -20,3 +20,5 @@ domestic_cup,club,all_other_club,Domestic cup,National knockout cup grouped unde
 domestic_super_cup,club,all_other_club,Domestic super cup,Domestic super cup or shield grouped under the user's all-other club bucket,Supercopa de España
 all_other_club,club,all_other_club,All other club goals,Club matches not assigned to the four named club families,Other; postseason; unallocated domestic competition
 unclassified_club,club,all_other_club,Unclassified club,Source bucket awaiting classification,Unknown source bucket
+club_competition_aggregate_unallocated,club,all_other_club,Club competition aggregate — unallocated,Multi-year club aggregate that overlaps finer competition records and must be used only as a selected source variant,RSSSF Pelé core set
+representative_team_other,representative_team,all_other_club,Representative or select team,Army state league or invitational representative teams outside the club and senior-national-team contexts,Army teams; São Paulo selection; other selects

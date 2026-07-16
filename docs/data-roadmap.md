@@ -9,11 +9,17 @@
   opponents and results from 2012 in the current snapshot.
 - All six have championship-edition honour lists with runner-up and individual
   awards excluded.
+- RSSSF's broad Pelé universe is retained as a parallel 1,413-match, 1,324-goal
+  aggregate assertion, including 451 Santos friendlies with 449 goals and 43
+  Cosmos friendlies with 29 goals. It is not silently added to the finer season
+  table because the sources overlap.
 
 ## Material gaps
 
 1. Historical club friendlies, tours, benefit matches and other games are not
-   yet enumerated match by match. This is especially consequential for Pelé.
+   yet enumerated match by match. Pelé's broader RSSSF totals are captured, but
+   their dates and opponents are still absent for most of the 494 club
+   friendlies in that assertion.
 2. Match-level appearances and wins before 2012 remain incomplete for all six;
    the CC0 structured supplement covers only Messi and Cristiano in this set.
 3. Season tables sometimes expose broad source buckets (“Other”, “Competitive”)

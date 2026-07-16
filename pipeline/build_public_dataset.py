@@ -242,6 +242,38 @@ TITLES = {
 "maradona": [("Boca Juniors","Argentine Primera División","1981 Metropolitano"),("Barcelona","Copa del Rey","1982-83"),("Barcelona","Copa de la Liga",1983),("Napoli","Serie A","1986-87"),("Napoli","Serie A","1989-90"),("Napoli","Coppa Italia","1986-87"),("Napoli","Supercoppa Italiana",1990),("Napoli","UEFA Cup","1988-89"),("Argentina U20","FIFA World Youth Championship",1979),("Argentina","FIFA World Cup",1986),("Argentina","Artemio Franchi Cup",1993)],
 }
 
+# RSSSF's current Pelé page reports a broader all-matches universe by team and
+# by the source's own treatment. These component rows sum to 1,413 matches and
+# 1,324 goals. They are deliberately kept as a parallel aggregate assertion:
+# they overlap the season table and cannot support an exact age curve.
+PELE_RSSSF_AGGREGATES = [
+    ("Santos","1956-1974","rsssf_core_set",666,644,"club_competition_aggregate_unallocated"),
+    ("Santos","1956-1974","friendlies",451,449,"all_other_club"),
+    ("Combined Santos/Vasco","1957","all_listed",4,6,"all_other_club"),
+    ("Brazil","1957-1971","senior_national_team",92,77,"national_team_all_matches_unallocated"),
+    ("Brazil — other matches","1957-1976","rsssf_core_set",4,2,"national_team_other"),
+    ("Brazil — other matches","1957-1976","friendlies",45,42,"national_team_friendlies"),
+    ("Army teams","1959","rsssf_core_set",4,4,"representative_team_other"),
+    ("Army teams","1959","friendlies",10,12,"representative_team_other"),
+    ("São Paulo selection","1959-1969","all_listed",15,12,"representative_team_other"),
+    ("New York Cosmos","1975-1977","rsssf_core_set",65,37,"club_competition_aggregate_unallocated"),
+    ("New York Cosmos","1975-1977","friendlies",43,29,"all_other_club"),
+    ("Other selects","1973-1987","all_listed",5,2,"representative_team_other"),
+    ("Other teams","1974-1990","all_listed",6,8,"representative_team_other"),
+    ("Fluminense","1978","guest_appearance",2,0,"all_other_club"),
+    ("Flamengo","1979","guest_appearance",1,0,"all_other_club"),
+]
+
+def pele_rsssf_aggregates():
+    source=(RAW/'pele_rsssf_data.html').read_bytes().decode('cp1252',errors='replace')
+    normalized=re.sub(r'\s+',' ',source)
+    if '1413 -1324' not in normalized.replace('–','-').replace('—','-'):
+        raise ValueError('RSSSF Pelé aggregate total changed; review the source')
+    rows=[]
+    for team,period,treatment,apps,goals,family in PELE_RSSSF_AGGREGATES:
+        rows.append({'player_id':'pele','player_name':'Pelé','team':team,'period':period,'source_treatment':treatment,'appearances':apps,'goals':goals,'competition_family':family,'variant_id':'rsssf_pele_all_listed_matches_2025','component_role':'additive_component','overlaps_season_competition':1,'supports_exact_age_curve':0,'source_id':'rsssf_pele_additional_data','source_url':'https://www.rsssf.org/players/ppeledata.html','source_granularity':'multi_year_aggregate'})
+    return pd.DataFrame(rows)
+
 def title_family(name):
     n=name.lower()
     if 'world cup' in n and 'club' not in n: return 'national_team_world_cup_finals'
@@ -276,6 +308,7 @@ def main():
 
     modern=modern_transfermarkt()
     modern.to_csv(OUT/'modern_match_appearances.csv',index=False)
+    pele_rsssf_aggregates().to_csv(OUT/'historical_aggregate_assertions.csv',index=False)
 
     title_rows=[]
     # Cristiano table is uniquely structured and already includes every team result.
@@ -297,7 +330,7 @@ def main():
         player_seasons=s.loc[s.player_id==pid,'season'].astype(str).tolist()
         season_key=lambda value:int(re.search(r'\d{4}',value).group())
         cov.append({'player_id':pid,'player_name':cfg['name'],'season_rows':int((s.player_id==pid).sum()),'season_first':min(player_seasons,key=season_key) if player_seasons else None,'season_last':max(player_seasons,key=season_key) if player_seasons else None,'national_goal_events':int(i.loc[i.player_id==pid,'goals'].sum()),'national_goal_source_granularity':'goal_event','national_appearance_rows':91 if pid=='maradona' else 0,'modern_match_appearances':len(m),'modern_first':str(m.date.min()) if len(m) else None,'modern_last':str(m.date.max()) if len(m) else None,'titles':sum(1 for x in title_rows if x['player_id']==pid)})
-    (OUT/'coverage.json').write_text(json.dumps({'generated':date.today().isoformat(),'scope_note':'No official/unofficial primitive. Users select competition families.','players':cov},indent=2,ensure_ascii=False))
+    (OUT/'coverage.json').write_text(json.dumps({'generated':date.today().isoformat(),'scope_note':'Users select named competition families; source treatments remain metadata.','players':cov},indent=2,ensure_ascii=False))
     print(json.dumps(cov,indent=2,ensure_ascii=False))
 
 if __name__=='__main__': main()

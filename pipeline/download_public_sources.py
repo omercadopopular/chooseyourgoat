@@ -17,6 +17,7 @@ SOURCES={
     'messi_intl.html':WIKI+'List_of_international_goals_scored_by_Lionel_Messi',
     'cristiano_intl.html':WIKI+'List_of_international_goals_scored_by_Cristiano_Ronaldo',
     'maradona_intl.html':'https://www.rsssf.org/miscellaneous/maradona-intl.html',
+    'pele_rsssf_data.html':'https://www.rsssf.org/players/ppeledata.html',
     'appearances.csv.gz':'https://pub-e682421888d945d684bcae8890b0ec20.r2.dev/data/appearances.csv.gz',
     'games.csv.gz':'https://pub-e682421888d945d684bcae8890b0ec20.r2.dev/data/games.csv.gz',
     'competitions.csv.gz':'https://pub-e682421888d945d684bcae8890b0ec20.r2.dev/data/competitions.csv.gz',
