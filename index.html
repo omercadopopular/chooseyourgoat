@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Compare football greats at the same age, career stage, or number of appearances." />
+    <title>Choose Your GOAT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Choose Your GOAT home">
+        <span class="brand-mark">G</span>
+        <span>CHOOSE YOUR <strong>GOAT</strong></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a class="active" href="#compare">Compare</a>
+        <a href="#method">Method</a>
+        <a href="#coverage">Coverage</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="eyebrow">SIX ICONS · ONE COMMON SCALE</div>
+        <h1>Greatness needs<br /><em>a denominator.</em></h1>
+        <p>Compare football's defining attackers at the same age, career stage, or number of appearances—not just at retirement.</p>
+        <a class="hero-cta" href="#compare">Build a comparison <span>↓</span></a>
+        <div class="ball-orbit" aria-hidden="true"><div class="ball">✦</div></div>
+      </section>
+
+      <aside class="prototype-note" role="note">
+        <strong>Prototype dataset</strong>
+        <span>The current numbers are illustrative fixtures for testing the interface—not verified historical totals.</span>
+      </aside>
+
+      <section class="compare-section" id="compare">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">01 / THE MATCH-UP</span>
+            <h2>Pick your legends</h2>
+          </div>
+          <p>Select two to four players. Every headline value is evaluated at the last point all selected players have in common.</p>
+        </div>
+
+        <div class="player-grid" id="player-grid" aria-label="Player selection"></div>
+
+        <div class="control-panel">
+          <label>Measure
+            <select id="metric-select">
+              <option value="goals">Cumulative goals</option>
+              <option value="goalsPerGame">Cumulative goals / game</option>
+              <option value="assists">Cumulative assists</option>
+              <option value="winShare">Match win share</option>
+              <option value="trophyShare">Tournament win share</option>
+            </select>
+          </label>
+          <label>Normalize by
+            <select id="axis-select">
+              <option value="age">Age</option>
+              <option value="appearances">Appearances</option>
+              <option value="careerSeason">Career season</option>
+            </select>
+          </label>
+          <label>Universe
+            <select id="universe-select">
+              <option value="official">Official senior</option>
+              <option value="club">Club only</option>
+              <option value="national">National team only</option>
+            </select>
+          </label>
+          <label class="common-toggle">
+            <input id="common-support" type="checkbox" checked />
+            <span>Common support only</span>
+          </label>
+        </div>
+
+        <div class="chart-shell">
+          <div class="chart-meta">
+            <div><span id="chart-kicker">CUMULATIVE GOALS</span><h3 id="chart-title">By age</h3></div>
+            <div class="legend" id="legend"></div>
+          </div>
+          <div id="chart" class="chart" role="img" aria-label="Interactive comparison chart"></div>
+          <div class="chart-footer"><span id="support-note"></span><span>Hover or focus a point for detail</span></div>
+        </div>
+
+        <div class="scorecards" id="scorecards"></div>
+      </section>
+
+      <section class="method-section" id="method">
+        <span class="kicker light">02 / THE RULES</span>
+        <h2>Same question.<br />Same exposure.</h2>
+        <div class="principles">
+          <article><span>01</span><h3>Common support</h3><p>Career comparisons stop at the latest age or appearance count observed for every selected player.</p></article>
+          <article><span>02</span><h3>Unknown ≠ zero</h3><p>Historical assists are shown only for covered observations. Missing records never become zero assists.</p></article>
+          <article><span>03</span><h3>Trophies need denominators</h3><p>A tournament record is shown as editions won over editions entered, with exact counts beside the percentage.</p></article>
+        </div>
+      </section>
+
+      <section class="coverage-section" id="coverage">
+        <div class="section-heading">
+          <div><span class="kicker">03 / DATA COVERAGE</span><h2>Trust the gaps, too.</h2></div>
+          <p>The production database will publish field-level coverage and source provenance. This prototype demonstrates the disclosure system.</p>
+        </div>
+        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Goals</th><th>Results</th><th>Assists</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
+      </section>
+    </main>
+
+    <footer><div class="brand"><span class="brand-mark">G</span><span>CHOOSE YOUR <strong>GOAT</strong></span></div><p>Evidence first. Arguments welcome.</p><a href="docs/methodology.md">Methodology ↗</a></footer>
+    <div class="tooltip" id="tooltip" hidden></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+
