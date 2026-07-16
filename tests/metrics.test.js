@@ -42,11 +42,16 @@ test("club and national filters partition the web observations", () => {
   }
 });
 
-test("Pelé all-category bridge reconciles to RSSSF's broad universe", () => {
+test("Pelé's multi-year aggregate assertions are not plotted at 1974", () => {
   const pele = players.find(player => player.id === "pele");
-  const total = buildSeries(pele, { metric: "goals", axis: "careerSeason", buckets: allBuckets }).at(-1);
-  assert.equal(total.appearances, 1413);
-  assert.equal(total.goals, 1324);
+  const otherClub = buildSeries(pele, { metric: "goals", axis: "careerSeason", buckets: ["all_other_club"] });
+  const point1974 = otherClub.find(point => point.year === 1974);
+  const point1973 = otherClub.find(point => point.year === 1973);
+  assert.ok(!point1974 || !point1973 || point1974.goals - point1973.goals < 100);
+  assert.ok(pele.observations.some(row => row.aggregate_only && row.goals === 449));
+  const allocated = pele.observations.filter(row => row.team === "Santos" && row.competition_family === "club_friendly");
+  assert.equal(allocated.reduce((sum, row) => sum + row.goals, 0), 448);
+  assert.equal(allocated.find(row => row.period === "1974").goals, 4);
 });
 
 test("common support trims every populated series", () => {

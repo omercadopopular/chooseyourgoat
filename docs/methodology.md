@@ -56,6 +56,16 @@ Season aggregates, goal events, appearance ledgers, and title lists are not
 summed merely because they share a player. They overlap and represent different
 views. The generated web bundle combines non-overlapping club aggregates,
 senior national-team ledgers, and youth/Olympic aggregates. Pelé's explicitly
-documented bridge rows reconcile the detailed table to RSSSF's broader
-1,413-match/1,324-goal universe and are marked aggregate-only. Every canonical
-output row retains a URL and granularity.
+documented assertions reconcile the detailed table to RSSSF's broader
+1,413-match/1,324-goal universe and are marked `aggregate_only`. They remain in
+the dataset for provenance and career-total reconciliation, but are excluded
+from timelines because RSSSF does not allocate those multi-year totals by date
+or season. Assigning them to the last year of the span would create a fictitious
+1974 jump. Every canonical output row retains a URL and granularity.
+
+For the plotted Pelé “all other club goals” curve, Santos friendly and tour
+matches are allocated by calendar year using the public match-by-match ledger
+at `pt.wikipedia.org/wiki/Estatísticas_de_Pelé`. Its Santos friendly series has
+450 matches and 449 goals from 1956–1974. The separate RSSSF 451/449 aggregate
+is retained as a source assertion, not added to this series, because the two
+records overlap and differ by one appearance.

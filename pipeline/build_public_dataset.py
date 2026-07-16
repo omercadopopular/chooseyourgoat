@@ -132,7 +132,7 @@ def bucket_family(bucket, division=""):
     return "unclassified_club"
 
 def parse_club_stats(player_id, cfg):
-    tables=pd.read_html(RAW/f"{cfg['wiki']}.html")
+    tables=pd.read_html(str(RAW/f"{cfg['wiki']}.html"), flavor='lxml')
     indices=[cfg["club_table"]]
     if player_id=="pele": indices.append(6)
     result=[]
@@ -174,7 +174,7 @@ def parse_club_stats(player_id, cfg):
     return result
 
 def parse_national_year_stats(player_id,cfg):
-    df=flatten_columns(pd.read_html(RAW/f"{cfg['wiki']}.html")[cfg["national_table"]].copy())
+    df=flatten_columns(pd.read_html(str(RAW/f"{cfg['wiki']}.html"), flavor='lxml')[cfg["national_table"]].copy())
     team_col=next(c for c in df if c.split("|")[0] in {"Team","Season"})
     year_col=next(c for c in df if c.split("|")[0] in {"Year","Tournament"})
     df[team_col]=df[team_col].replace("nan",pd.NA).ffill()
@@ -265,7 +265,7 @@ def parse_rsssf_national_ledger(player_id):
     return appearances,events
 
 def parse_wiki_international_goals(player_id,path,table_index):
-    df=pd.read_html(path)[table_index].copy()
+    df=pd.read_html(str(path), flavor='lxml')[table_index].copy()
     out=[]
     for event_number,(_,r) in enumerate(df.iterrows(),1):
         comp=clean(r.get("Competition","")); dt=clean(r.get("Date",""));
@@ -409,9 +409,9 @@ WEB_PLAYERS = {
     "maradona":{"shortName":"Maradona","country":"Argentina","color":"#e45475"},
 }
 
-# Additive rows needed to bridge the fine Pelé season table to RSSSF's broader
-# 1,413-match/1,324-goal universe. The source gives multi-year spans, so these
-# are placed at the span endpoint and explicitly marked aggregate-only.
+# Aggregate assertions that reconcile the fine Pelé season table to RSSSF's
+# broader 1,413-match/1,324-goal universe. Their dates are storage keys only;
+# aggregate_only rows are deliberately excluded from timeline curves.
 PELE_WEB_BRIDGES = [
     (1957,"Combined Santos/Vasco",4,6,"all_other_club"),
     (1959,"Army teams",14,16,"all_other_club"),
@@ -425,6 +425,19 @@ PELE_WEB_BRIDGES = [
     (1979,"Flamengo guest match",1,0,"all_other_club"),
     (1987,"Other representative selections",5,2,"all_other_club"),
     (1990,"Other teams",6,8,"all_other_club"),
+]
+
+# Santos friendly/tour matches allocated by calendar year from the public
+# match-by-match Pelé ledger. The ledger totals 450 matches and 449 goals for
+# Santos friendlies in 1956–1974. One 1956 match/goal is already present in the
+# season table, so the 1956 additive row below is the remaining 1/1.
+# Source: https://pt.wikipedia.org/wiki/Estat%C3%ADsticas_de_Pel%C3%A9
+PELE_SANTOS_FRIENDLIES_BY_YEAR = [
+    (1956,1,1), (1957,29,16), (1958,14,14), (1959,42,48),
+    (1960,30,28), (1961,36,48), (1962,17,17), (1963,15,22),
+    (1964,12,6), (1965,21,33), (1966,19,16), (1967,33,31),
+    (1968,32,24), (1969,18,18), (1970,25,37), (1971,32,22),
+    (1972,38,36), (1973,26,27), (1974,9,4),
 ]
 
 def user_bucket(family):
@@ -463,6 +476,9 @@ def build_web_bundle(season,national_appearances,title_rows,coverage):
             bucket='national_team_olympic' if re.search(r'U23|Olympic',row.team,re.I) else 'national_team_other'
             observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team','bucket':bucket,'competition_family':bucket,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
         if pid=='pele':
+            for year,apps,goals in PELE_SANTOS_FRIENDLIES_BY_YEAR:
+                end_date=pd.Timestamp(f'{year}-12-31')
+                observations.append({'period':str(year),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'club','bucket':'all_other_club','competition_family':'club_friendly','team':'Santos','competition_name':'Friendly and tour matches','appearances':apps,'goals':goals,'wins':None,'source_granularity':'calendar_year_from_match_ledger','source_url':'https://pt.wikipedia.org/wiki/Estat%C3%ADsticas_de_Pel%C3%A9'})
             for year,label,apps,goals,bucket in PELE_WEB_BRIDGES:
                 end_date=pd.Timestamp(f'{year}-12-31')
                 observations.append({'period':str(year),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team' if bucket.startswith('national_team_') else 'club','bucket':bucket,'competition_family':bucket,'team':label,'competition_name':label,'appearances':apps,'goals':goals,'wins':None,'source_granularity':'rsssf_multi_year_aggregate_bridge','aggregate_only':True})
@@ -474,7 +490,7 @@ def build_web_bundle(season,national_appearances,title_rows,coverage):
         player_coverage=next(item for item in coverage if item['player_id']==pid)
         info=WEB_PLAYERS[pid]
         players.append({'id':pid,'name':cfg['name'],**info,'born':cfg['birth'],'years':f"{player_coverage['season_first']}–{player_coverage['season_last']}",'observations':sorted(observations,key=lambda row:(row['period_end'],row['team_context'],row['bucket'])),'titles':sorted(title_events,key=lambda row:row['date']),'coverage':{'club':'Career-spanning season/competition aggregates','national':f"{player_coverage['national_appearance_rows']} complete senior caps",'titles':f"{player_coverage['titles']} listed championship editions"}})
-    bundle={'meta':{'dataCutoff':DATA_CUTOFF.isoformat(),'isFixture':False,'notice':'Career-spanning sourced aggregates. Exact match dates/results are complete for senior national teams; historical club observations are season-level.'},'taxonomy':WEB_TAXONOMY,'players':players}
+    bundle={'meta':{'dataCutoff':DATA_CUTOFF.isoformat(),'isFixture':False,'notice':'Timeline curves use dated or season-allocated records only. Multi-year aggregate assertions are retained for provenance but are not plotted at an arbitrary endpoint.'},'taxonomy':WEB_TAXONOMY,'players':players}
     (ROOT/'data'/'web_dataset.json').write_text(json.dumps(bundle,ensure_ascii=False,separators=(',',':')))
 
 def main():
@@ -498,7 +514,7 @@ def main():
 
     title_rows=[]
     # Cristiano table is uniquely structured and already includes every team result.
-    cr=pd.read_html(RAW/'cristiano.html')[2]
+    cr=pd.read_html(str(RAW/'cristiano.html'), flavor='lxml')[2]
     TITLES['cristiano']=[]
     for _,r in cr.iterrows():
         comp=clean(r['Competition'])

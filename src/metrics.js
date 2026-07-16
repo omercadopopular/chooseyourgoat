@@ -13,7 +13,9 @@ function ageAtYearEnd(born, year) {
 
 export function buildSeries(player, { metric = "goals", axis = "age", buckets = [] } = {}) {
   const selected = new Set(buckets);
-  const observations = player.observations.filter(row => selected.has(row.bucket));
+  // Multi-year aggregates have no defensible position on an age/year curve.
+  // Plotting them at the span endpoint manufactures a one-year jump.
+  const observations = player.observations.filter(row => selected.has(row.bucket) && !row.aggregate_only);
   const titles = player.titles.filter(row => selected.has(row.bucket));
   const allYears = [...player.observations.map(row => +row.period_end.slice(0, 4)), ...player.titles.map(row => row.year)];
   const careerStart = Math.min(...allYears);
