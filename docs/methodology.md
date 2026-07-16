@@ -22,7 +22,11 @@ unless the interface exposes the finer controls.
 ## Metrics
 
 - Goals per game = selected goals / selected appearances.
-- Marginal season rate = goals in that season / appearances in that season.
+- Marginal average goals per game = goals in the current dated observation
+  period / appearances in that period. The period is a season for historical
+  club aggregates and a calendar year for the national-team ledger.
+- Cumulative average goals per game = all selected goals through the plotted
+  point / all selected appearances through that point.
 - Cumulative rate at appearance *n* = goals through appearance *n* / *n*.
 - Cumulative rate by age is plotted at calendar-year or season endpoints in the
   six-player web bundle. The underlying national ledger retains exact dates;

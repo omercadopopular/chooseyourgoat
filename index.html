@@ -65,9 +65,8 @@
           <label>Measure
             <select id="metric-select">
               <option value="goals">Cumulative goals</option>
-              <option value="goalsPerGame">Cumulative goals / game</option>
-              <option value="marginalGoalsPerGame">Goals / game in period</option>
-              <option value="titles">Cumulative titles won</option>
+              <option value="goalsPerGame">Cumulative average goals / game</option>
+              <option value="marginalGoalsPerGame">Marginal average goals / game</option>
             </select>
           </label>
           <label>Normalize by
@@ -93,6 +92,7 @@
         </div>
 
         <div class="scorecards" id="scorecards"></div>
+        <p class="restriction-summary">Rate curves can be normalized by age or cumulative appearances. Marginal averages use the matches in each dated season/calendar-year observation; cumulative averages use every selected match through that point.</p>
       </section>
 
       <section class="method-section" id="method">

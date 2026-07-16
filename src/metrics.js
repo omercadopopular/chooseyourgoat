@@ -1,7 +1,7 @@
 export const metricLabels = {
   goals: "Cumulative goals",
-  goalsPerGame: "Cumulative goals / game",
-  marginalGoalsPerGame: "Goals / game in period",
+  goalsPerGame: "Cumulative average goals / game",
+  marginalGoalsPerGame: "Marginal average goals / game",
   titles: "Cumulative titles won"
 };
 
