@@ -1,6 +1,6 @@
 # Choose Your GOAT
 
-An evidence-first football comparison interface. The six-player prototype includes Pelé, Lionel Messi, Cristiano Ronaldo, Ronaldo Nazário, Ronaldinho and Diego Maradona.
+An evidence-first football comparison interface covering Pelé, Lionel Messi, Cristiano Ronaldo, Ronaldo Nazário, Ronaldinho, Diego Maradona, Kylian Mbappé, Erling Haaland, Johan Cruyff, Roberto Baggio, Neymar, Robert Lewandowski, Luis Suárez, Ferenc Puskás and Romário.
 
 ## Current status
 

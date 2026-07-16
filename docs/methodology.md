@@ -29,7 +29,7 @@ unless the interface exposes the finer controls.
   point / all selected appearances through that point.
 - Cumulative rate at appearance *n* = goals through appearance *n* / *n*.
 - Cumulative rate by age is plotted at calendar-year or season endpoints in the
-  six-player web bundle. The underlying national ledger retains exact dates;
+  published web bundle. The underlying canonical national ledger retains exact dates;
   historical club aggregates cannot support match-by-match age curves.
 - Cumulative titles = selected championship editions listed in the honours
   source through that age or career season.
@@ -75,6 +75,13 @@ the dataset for provenance and career-total reconciliation, but are excluded
 from timelines because RSSSF does not allocate those multi-year totals by date
 or season. Assigning them to the last year of the span would create a fictitious
 1974 jump. Every canonical output row retains a URL and granularity.
+
+The nine-player expansion uses public career-spanning club season tables and
+calendar-year senior national-team totals. Its competition-edition ledger is
+published conservatively: only named editions supported by an appearance row
+are counted, while unresolved aggregate “Other” cells and national honours
+without edition-level participation evidence remain excluded and visibly marked
+as partial reconciliation.
 
 For the plotted Pelé “all other club goals” curve, Santos friendly and tour
 matches are allocated by calendar year using the public match-by-match ledger

@@ -10,8 +10,8 @@ if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixtu
 if (data.meta.dataCutoff !== "2025-12-31") errors.push("unexpected data cutoff");
 const ids = data.players.map(player => player.id);
 if (JSON.stringify(ids.slice(0, 6)) !== JSON.stringify(base)) errors.push("canonical six-player roster mismatch");
-if (![6, 15].includes(ids.length)) errors.push("player expansion must be all-or-none");
-if (ids.length === 15 && JSON.stringify(ids.slice(6)) !== JSON.stringify(expansion)) errors.push("nine-player expansion roster mismatch");
+if (ids.length !== 15) errors.push("published bundle must contain all 15 players");
+if (JSON.stringify(ids.slice(6)) !== JSON.stringify(expansion)) errors.push("nine-player expansion roster mismatch");
 
 for (const player of data.players) {
   if (!player.observations.length) errors.push(`${player.id}: no observations`);

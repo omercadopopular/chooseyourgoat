@@ -67,6 +67,8 @@ ALIASES = {
     "olympicgames": "olympics", "summerolympics": "olympics",
     "finalissima": "conmeboluefa", "conmeboluefa": "conmeboluefa",
     "fifaworldyouthchampionship": "worldyouthchampionship",
+    "copadelgeneralisimo": "copadelrey",
+    "seriea": "campeonatobrasileiro", "iiiligagroupi": "iiiliga",
 }
 
 
@@ -83,6 +85,21 @@ PRIMARY_CUP = {
     "PSV": "KNVB Cup", "Inter Milan": "Coppa Italia",
     "Corinthians": "Copa do Brasil", "Napoli": "Coppa Italia",
     "Sevilla": "Copa del Rey",
+    "Monaco": "Coupe de France", "Borussia Dortmund": "DFB-Pokal",
+    "Manchester City": "FA Cup", "Liverpool": "FA Cup",
+    "Ajax": "KNVB Cup", "Feyenoord": "KNVB Cup",
+    "Vicenza": "Coppa Italia", "Fiorentina": "Coppa Italia",
+    "Bologna": "Coppa Italia", "Brescia": "Coppa Italia",
+    "Bayern Munich": "DFB-Pokal", "Lech Poznań": "Polish Cup",
+    "Znicz Pruszków": "Polish Cup", "Legia Warsaw II": "Polish Cup",
+    "Groningen": "KNVB Cup", "Nacional": "Copa AUF Uruguay",
+    "Vasco da Gama": "Copa do Brasil", "Flamengo": "Copa do Brasil",
+    "Fluminense": "Copa do Brasil", "Valencia": "Copa del Rey",
+    "Milan": "Coppa Italia",
+    "Santos": "Copa do Brasil", "Red Bull Salzburg": "Austrian Cup",
+    "Molde": "Norwegian Cup", "Atlético Madrid": "Copa del Rey",
+    "Grêmio": "Copa do Brasil", "Kispest/Budapesti Honvéd SE": "Hungarian Cup",
+    "Miami FC": "U.S. Open Cup",
 }
 
 RONALDINHO_CUP = {
@@ -128,6 +145,31 @@ def continental(player, team, season, apps):
     elif player == "maradona":
         if team == "Barcelona": name = "European Cup Winners' Cup"
         elif team == "Napoli": name = "European Cup" if season in {"1987-88", "1990-91"} else "UEFA Cup"
+        else: return []
+    elif player == "mbappe":
+        name = "UEFA Champions League"
+    elif player == "haaland":
+        name = "UEFA Europa League" if team == "Molde" else "UEFA Champions League"
+    elif player == "cruyff":
+        if team in {"Ajax", "Feyenoord"}: name = "European Cup"
+        elif team == "Barcelona": name = "UEFA Cup"
+        else: return []
+    elif player == "baggio":
+        name = "UEFA Cup" if team in {"Fiorentina", "Juventus", "Inter Milan"} else "UEFA Champions League"
+    elif player == "neymar":
+        name = "Copa Libertadores" if team == "Santos" else "UEFA Champions League"
+    elif player == "lewandowski":
+        name = "UEFA Europa League" if team in {"Lech Poznań", "Borussia Dortmund"} and season in {"2008-09", "2010-11"} else "UEFA Champions League"
+    elif player == "suarez":
+        name = "UEFA Europa League" if team in {"Ajax", "Liverpool"} and season in {"2009-10", "2010-11", "2012-13"} else "UEFA Champions League"
+    elif player == "puskas":
+        name = "European Cup"
+    elif player == "romario":
+        if team == "Flamengo" and season == "1999": name = "Copa Mercosur"
+        elif team == "Vasco da Gama" and season == "2000": name = "Copa Mercosur"
+        elif team in {"Vasco da Gama", "Flamengo", "Fluminense"}: name = "Copa Libertadores"
+        elif team == "PSV": name = "European Cup"
+        elif team == "Barcelona": name = "UEFA Champions League"
         else: return []
     else:
         return []
@@ -212,18 +254,22 @@ def resolve_club(player_id, observation):
         resolved = PRIMARY_CUP.get(team)
         return [(resolved, season, "all_other_club", apps, "career-statistics national-cup definition")] if resolved else []
     if low == "league cup":
-        return [("Football League Cup", season, "all_other_club", apps, "career-statistics league-cup definition")]
+        resolved = "Coupe de la Ligue" if team in {"Monaco", "Paris Saint-Germain"} else "Football League Cup" if team in {"Manchester City", "Liverpool", "Manchester United"} else None
+        return [(resolved, season, "all_other_club", apps, "career-statistics league-cup definition")] if resolved else []
     if low == "cup":
         if team == "Paris Saint-Germain":
             splits = {"2001-02": [("Coupe de la Ligue", 4), ("Coupe de France", 2)], "2002-03": [("Coupe de la Ligue", 1), ("Coupe de France", 5)]}
             return [(n, season, "all_other_club", a, "career-statistics cup-cell footnote") for n, a in splits.get(season, [])]
-        resolved = RONALDINHO_CUP.get(team)
+        resolved = RONALDINHO_CUP.get(team) or PRIMARY_CUP.get(team)
         return [(resolved, season, "all_other_club", apps, "career-statistics cup definition")] if resolved else []
-    if low == "continental":
+    if low in {"continental", "europe"}:
         return continental(player_id, team, season, apps)
     if low == "state league":
-        resolved = "Campeonato Mineiro" if team == "Cruzeiro" else "Campeonato Paulista"
-        return [(resolved, season, "regional_league", apps, "career-statistics state-league definition")]
+        resolved = ({"Cruzeiro": "Campeonato Mineiro", "Atlético Mineiro": "Campeonato Mineiro",
+                     "Santos": "Campeonato Paulista", "Corinthians": "Campeonato Paulista",
+                     "Vasco da Gama": "Campeonato Carioca", "Flamengo": "Campeonato Carioca",
+                     "Fluminense": "Campeonato Carioca", "America-RJ": "Campeonato Carioca"}).get(team)
+        return [(resolved, season, "regional_league", apps, "career-statistics state-league definition")] if resolved else []
     if low == "regional league":
         resolved = {"Grêmio": "Campeonato Gaúcho", "Flamengo": "Campeonato Carioca", "Atlético Mineiro": "Campeonato Mineiro"}.get(team)
         return [(resolved, season, "regional_league", apps, "career-statistics regional-league footnote")] if resolved else []
@@ -241,6 +287,7 @@ def make_entry(context, team, name, edition, bucket, appearances, bench, source_
         "edition_id": "|".join((context, team, name, str(edition))), "edition": str(edition), "year": year,
         "team": team, "competition_name": name, "bucket": bucket, "appearances": appearances,
         "bench_listings": bench, "first_date": date, "last_date": date,
+        "participation_confirmed": bool(appearances or bench),
         "participation_basis": basis, "participation_source_url": source_url,
         "participation_evidence": note, "won": False,
     }
@@ -257,7 +304,7 @@ def main():
         if pid == "ronaldo" and not any(title["team"] == "Cruzeiro" and title["competition_name"] == "Copa do Brasil" and str(title["edition"]) == "1993" for title in player["titles"]):
             player["titles"].append({"year": 1993, "date": "1993-12-31", "age": 17.285, "bucket": "all_other_club", "competition_name": "Copa do Brasil", "team": "Cruzeiro", "edition": "1993"})
             player["titles"].sort(key=lambda title: title["date"])
-        player["coverage"]["titles"] = f"{len(player['titles'])} listed championship editions"
+        player["coverage"]["titles"] = f"{len(player['titles'])} listed championship editions" + ("; participation reconciliation partial" if pid not in {"pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"} else "")
         entries = {}
         unresolved = []
 
@@ -281,7 +328,7 @@ def main():
             if not resolved:
                 unresolved.append({"team": observation["team"], "edition": observation["period"], "source_label": observation["competition_name"], "appearances": observation["appearances"]})
             for name, edition, bucket, appearances, note in resolved:
-                add(make_entry("club", observation["team"], name, edition, bucket, appearances, 0, source_urls.get(pid, ""), "appearance", note))
+                add(make_entry("club", observation["team"], name, edition, bucket, appearances, 0, observation.get("source_url") or source_urls.get(pid, ""), "appearance", note))
 
         groups = defaultdict(list)
         for row in national:
@@ -299,7 +346,6 @@ def main():
             add(make_entry("national", team, name, edition, bucket, apps, 0, source_urls.get(pid, ""), "appearance", "career-statistics youth competition footnote"))
         for team, name, edition, bucket, url in BENCH.get(pid, []):
             add(make_entry("national" if team in {"Brazil", "Argentina", "Portugal"} else "club", team, name, edition, bucket, 0, 1, url, "bench", "documented match-day substitute/squad listing"))
-
         unmatched = []
         for title in player["titles"]:
             title_name = canonical_name(title["competition_name"])
@@ -315,9 +361,11 @@ def main():
         player["competitionCoverage"] = {
             "appearanceConfirmed": sum(entry["appearances"] > 0 for entry in entries.values()),
             "benchConfirmed": sum(entry["bench_listings"] > 0 for entry in entries.values()),
+            "otherParticipationConfirmed": sum(entry["participation_confirmed"] and not entry["appearances"] and not entry["bench_listings"] for entry in entries.values()),
             "winsMatched": sum(entry["won"] for entry in entries.values()),
             "honoursUnmatched": len(unmatched), "unmatchedHonours": unmatched,
             "unresolvedAggregateRows": unresolved,
+            "reconciliationStatus": "partial" if pid not in {"pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"} else "complete",
         }
 
     data["meta"]["competitionNotice"] = "Competition editions are named and require a documented appearance or bench listing. Generic aggregate columns are resolved from cited footnotes or excluded; reported honours without participation evidence are not counted as wins."

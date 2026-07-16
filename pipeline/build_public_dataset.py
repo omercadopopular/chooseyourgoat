@@ -116,16 +116,17 @@ def flatten_columns(df):
     return df
 
 def bucket_family(bucket, division=""):
-    b=bucket.lower()
+    raw=bucket.lower()
+    b=f"{bucket} {division}".lower()
     if "intercontinental" in b or "club world" in b:
         return "intercontinental_federation_cup"
-    if "campeonato paulista" in b or "regional" in b or "state league" in b or "rio-são paulo" in b:
+    if any(name in b for name in ["campeonato paulista", "campeonato carioca", "campeonato mineiro", "campeonato gaúcho", "regional", "state league", "rio-são paulo"]):
         return "regional_league"
-    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b:
+    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b or b=="europe":
         return "continental_federation_cup"
-    if "cup" in b or "domestic" in b:
+    if "cup" in b or "copa" in b or "coppa" in b or "taça" in b or "pokal" in b or "domestic" in b:
         return "domestic_cup"
-    if b=="league" or "brasileiro" in b or "liga" in b or "serie a" in b:
+    if raw=="league" or any(name in b for name in ["brasileiro", "liga", "serie a", "premier league", "eredivisie", "bundesliga", "ligue 1", "mls", "division"]):
         return "national_league"
     if "other" in b or "postseason" in b:
         return "all_other_club"

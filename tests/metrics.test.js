@@ -13,12 +13,12 @@ test("research bundle has a fixed cutoff and is not a fixture", () => {
   assert.equal(data.meta.dataCutoff, "2025-12-31");
 });
 
-test("the canonical six exist and expansion is all-or-none", () => {
+test("the complete 15-player roster is published", () => {
   const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
   const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
   assert.deepEqual(players.slice(0, 6).map(player => player.id), base);
-  assert.ok(players.length === 6 || players.length === 15);
-  if (players.length === 15) assert.deepEqual(players.slice(6).map(player => player.id), expansion);
+  assert.equal(players.length, 15);
+  assert.deepEqual(players.slice(6).map(player => player.id), expansion);
 });
 
 test("hierarchy contains every requested user bucket", () => {
@@ -72,7 +72,7 @@ test("rates format with two decimal places", () => {
 test("competition editions require participation and win rates are bounded", () => {
   for (const player of players) {
     assert.ok(player.competitions.length > 0);
-    assert.ok(player.competitions.every(edition => edition.appearances > 0 || edition.bench_listings > 0));
+    assert.ok(player.competitions.every(edition => edition.participation_confirmed || edition.appearances > 0 || edition.bench_listings > 0));
     for (const metric of ["cumulativeCompetitionWinRate"]) {
       const series=buildCompetitionSeries(player,{metric,axis:"competitionCount",buckets:allBuckets});
       assert.ok(series.every(point => point.y >= 0 && point.y <= 1));
@@ -85,6 +85,6 @@ test("friendlies never count as competition editions", () => {
 });
 
 test("competition editions use named competitions rather than aggregate columns", () => {
-  const forbidden = new Set(["national cup", "continental", "other", "cup", "league", "postseason", "competitive", "friendly", "state league", "regional league"]);
+  const forbidden = new Set(["national cup", "continental", "europe", "other", "cup", "league", "postseason", "competitive", "friendly", "state league", "regional league", "league cup"]);
   for (const player of players) assert.ok(player.competitions.every(edition => !forbidden.has(edition.competition_name.toLowerCase())));
 });

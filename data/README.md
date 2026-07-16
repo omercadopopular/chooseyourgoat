@@ -11,8 +11,11 @@ seniority and source treatment. Users choose the comparison universe.
 - Wikipedia career-statistics, international-goal and honours tables, licensed
   under CC BY-SA. These tables consolidate citations to clubs, federations,
   RSSSF and specialist databases.
-- RSSSF chronological international records, used directly for all six senior
-  national-team appearance ledgers and the broad Pelé reconciliation.
+- RSSSF chronological international records, used directly for the canonical
+  six senior national-team appearance ledgers and the broad Pelé reconciliation.
+- Public career-statistics and honours tables for the nine-player expansion.
+  Club seasons are career-spanning; national-team totals are currently retained
+  at calendar-year level and fine competition allocation remains partial.
 - `dcaribou/transfermarkt-datasets`, CC0, used for match-level Messi and
   Cristiano Ronaldo coverage from 2012 onward.
 
@@ -22,7 +25,7 @@ seniority and source treatment. Users choose the comparison universe.
 - `national_team_goal_events.csv`: dated national-team goals with competition
   taxonomy.
 - `national_team_appearances.csv`: complete senior national-team RSSSF ledgers
-  for all six players through 31 December 2025. Every cap and goal reconciles.
+  for the canonical six through 31 December 2025. Every cap and goal reconciles.
 - `national_team_appearances_rsssf.csv`: compatibility extract containing the
   91-row Maradona portion of the unified appearance table.
 - `modern_match_appearances.csv`: modern match-level appearances, results and
@@ -41,7 +44,9 @@ seniority and source treatment. Users choose the comparison universe.
   competition-edition ledger, and the selectable hierarchy.
 
 These tables are a research release, not a claim of perfect completeness.
-Every row retains its source and granularity.
+Every row retains its source and granularity. The live bundle labels expansion
+competition reconciliation as partial and excludes honours that lack documented
+appearance or bench evidence from its win counts.
 
 Do not add aggregate rows from `season_competition.csv` to match-level rows.
 They are alternative views with overlapping coverage. In particular, the
