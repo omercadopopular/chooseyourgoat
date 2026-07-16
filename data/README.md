@@ -37,7 +37,8 @@ seniority and source treatment. Users choose the comparison universe.
   mapping to the user-facing buckets.
 - `sources.csv`: provenance, retrieval date, license/terms and caveats.
 - `../web_dataset.json`: generated browser bundle used by the live chart; it
-  contains only non-overlapping observations and the selectable hierarchy.
+  contains only non-overlapping observations, a named participation-confirmed
+  competition-edition ledger, and the selectable hierarchy.
 
 These tables are a research release, not a claim of perfect completeness.
 Every row retains its source and granularity.

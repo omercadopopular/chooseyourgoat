@@ -43,11 +43,12 @@ both. Own goals are not attributed to the compared player.
 The current `titles.csv` records championship editions listed in public player
 honours. Runner-up finishes and individual awards are excluded. A competition
 edition is counted as played only when the player has a documented appearance
-or is named on the bench. The current denominator is appearance-confirmed; the
-schema separately records bench listings as lineup sources become available.
-Friendlies and tours are excluded. A win enters the numerator only when a
-participated edition reconciles to the player's honours. Unmatched honours are
-reported as coverage gaps and excluded.
+or is named on the bench. Generic career-table columns such as “National cup”,
+“Continental”, and “Other” are resolved to the named competitions stated by the
+table definitions and row footnotes; unresolved aggregates do not enter the
+denominator. Friendlies and tours are excluded. A win enters the numerator only
+when a participated edition reconciles to the player's honours. Reported
+honours without participation evidence are disclosed and excluded.
 
 - Cumulative average win rate = editions won through the point / editions
   played through the point.
@@ -58,6 +59,9 @@ When normalizing by age, appearances, or career season, the default chart ends
 at the greatest point observed for every selected player under the same filters.
 Users may opt into full-career lines, but unmatched tails must be visually
 marked.
+
+The goals/games chart and the competition-edition chart maintain independent
+bucket selections. Changing one comparison universe never changes the other.
 
 ## Provenance and uncertainty
 

@@ -4,7 +4,7 @@ An evidence-first football comparison interface. The six-player prototype includ
 
 ## Current status
 
-The public chart is wired to the reproducible research release through `data/web_dataset.json`. It provides hierarchical competition-family filters, normalization by age, appearances or career season, cumulative and marginal goal rates, and filtered title counts. The fixed comparison cutoff is 31 December 2025.
+The public chart is wired to the reproducible research release through `data/web_dataset.json`. It provides independent hierarchical filters for the goals/games and competition-edition charts, normalization by age, appearances or career season, cumulative and marginal goal rates, and participation-confirmed title counts. The fixed comparison cutoff is 31 December 2025.
 
 ## Run locally
 

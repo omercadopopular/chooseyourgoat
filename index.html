@@ -103,8 +103,20 @@
 
         <div class="section-heading competition-heading">
           <div><span class="kicker">02 / COMPETITION RECORD</span><h2>Winning the competitions entered</h2></div>
-          <p>An edition counts only when participation is documented by an appearance or bench listing. Friendlies are excluded. The competition-family choices above apply here too.</p>
+          <p>An edition counts only when participation is documented by an appearance or bench listing. Friendlies are excluded. This chart has its own competition-family choices.</p>
         </div>
+        <section class="restriction-panel" aria-labelledby="competition-restriction-title">
+          <div class="restriction-heading">
+            <div><span class="kicker">INCLUDE IN THE COMPETITION CHART</span><h3 id="competition-restriction-title">Choose which competitions count</h3></div>
+            <div class="restriction-presets" aria-label="Competition filter presets">
+              <button type="button" data-competition-preset="all">All categories</button>
+              <button type="button" data-competition-preset="club">Club only</button>
+              <button type="button" data-competition-preset="national_team">National team only</button>
+            </div>
+          </div>
+          <div class="restriction-groups" id="competition-restriction-groups"></div>
+          <p class="restriction-summary" id="competition-restriction-summary"></p>
+        </section>
         <div class="control-panel">
           <label>Competition measure
             <select id="competition-metric-select">

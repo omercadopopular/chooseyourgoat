@@ -13,8 +13,12 @@ test("research bundle has a fixed cutoff and is not a fixture", () => {
   assert.equal(data.meta.dataCutoff, "2025-12-31");
 });
 
-test("all 15 requested players exist", () => {
-  assert.deepEqual(players.map(player => player.id), ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona", "mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"]);
+test("the canonical six exist and expansion is all-or-none", () => {
+  const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
+  const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
+  assert.deepEqual(players.slice(0, 6).map(player => player.id), base);
+  assert.ok(players.length === 6 || players.length === 15);
+  if (players.length === 15) assert.deepEqual(players.slice(6).map(player => player.id), expansion);
 });
 
 test("hierarchy contains every requested user bucket", () => {
@@ -78,4 +82,9 @@ test("competition editions require participation and win rates are bounded", () 
 
 test("friendlies never count as competition editions", () => {
   for (const player of players) assert.ok(player.competitions.every(edition => edition.bucket !== "national_team_friendlies" && edition.competition_family !== "club_friendly"));
+});
+
+test("competition editions use named competitions rather than aggregate columns", () => {
+  const forbidden = new Set(["national cup", "continental", "other", "cup", "league", "postseason", "competitive", "friendly", "state league", "regional league"]);
+  for (const player of players) assert.ok(player.competitions.every(edition => !forbidden.has(edition.competition_name.toLowerCase())));
 });

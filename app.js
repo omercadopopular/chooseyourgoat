@@ -9,7 +9,7 @@ const state = {
   axis: "age",
   common: true
 };
-const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true};
+const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true,buckets:new Set(allBuckets)};
 const playerFilter={query:"",era:"all",role:"all",country:"all"};
 const $ = selector => document.querySelector(selector);
 const playerGrid = $("#player-grid");
@@ -69,13 +69,11 @@ function renderRestrictions() {
     input.checked ? state.buckets.add(input.dataset.bucket) : state.buckets.delete(input.dataset.bucket);
     updateRestrictionState();
     renderChart();
-    renderCompetitionChart();
   }));
   document.querySelectorAll("[data-group]").forEach(input => input.addEventListener("change", () => {
     setGroup(input.dataset.group, input.checked);
     updateRestrictionState();
     renderChart();
-    renderCompetitionChart();
   }));
   document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => {
     state.buckets.clear();
@@ -83,9 +81,25 @@ function renderRestrictions() {
     else setGroup(button.dataset.preset, true);
     updateRestrictionState();
     renderChart();
-    renderCompetitionChart();
   }));
   updateRestrictionState();
+}
+
+function renderCompetitionRestrictions(){
+  $("#competition-restriction-groups").innerHTML=data.taxonomy.map(group=>`
+    <fieldset class="restriction-group">
+      <label class="restriction-parent"><input type="checkbox" data-competition-group="${group.id}">${group.label.replace('goals','competitions')}</label>
+      <div class="restriction-children">${group.children.map(child=>`<label class="restriction-child"><input type="checkbox" data-competition-bucket="${child.id}">${child.label}</label>`).join('')}</div>
+    </fieldset>`).join('');
+  const update=()=>{
+    for(const group of data.taxonomy){const parent=document.querySelector(`[data-competition-group="${group.id}"]`);const count=group.children.filter(c=>competitionState.buckets.has(c.id)).length;parent.checked=count===group.children.length;parent.indeterminate=count>0&&count<group.children.length;}
+    document.querySelectorAll('[data-competition-bucket]').forEach(i=>i.checked=competitionState.buckets.has(i.dataset.competitionBucket));
+    const labels=data.taxonomy.flatMap(g=>g.children).filter(c=>competitionState.buckets.has(c.id)).map(c=>c.label);$("#competition-restriction-summary").textContent=labels.length?`${labels.length} competition categories included: ${labels.join(' · ')}`:'No competition categories selected.';
+  };
+  document.querySelectorAll('[data-competition-bucket]').forEach(input=>input.addEventListener('change',()=>{input.checked?competitionState.buckets.add(input.dataset.competitionBucket):competitionState.buckets.delete(input.dataset.competitionBucket);update();renderCompetitionChart();}));
+  document.querySelectorAll('[data-competition-group]').forEach(input=>input.addEventListener('change',()=>{const group=data.taxonomy.find(g=>g.id===input.dataset.competitionGroup);group.children.forEach(c=>input.checked?competitionState.buckets.add(c.id):competitionState.buckets.delete(c.id));update();renderCompetitionChart();}));
+  document.querySelectorAll('[data-competition-preset]').forEach(button=>button.addEventListener('click',()=>{competitionState.buckets.clear();if(button.dataset.competitionPreset==='all')allBuckets.forEach(b=>competitionState.buckets.add(b));else data.taxonomy.find(g=>g.id===button.dataset.competitionPreset).children.forEach(c=>competitionState.buckets.add(c.id));update();renderCompetitionChart();}));
+  update();
 }
 
 function linePath(points, xScale, yScale) {
@@ -149,7 +163,7 @@ function renderScorecards(entries, endpoint) {
 }
 
 function renderCompetitionChart(){
-  let entries=data.players.filter(p=>state.selected.has(p.id)).map(player=>({player,points:buildCompetitionSeries(player,{...competitionState,buckets:[...state.buckets]})})).filter(e=>e.points.length);
+  let entries=data.players.filter(p=>state.selected.has(p.id)).map(player=>({player,points:buildCompetitionSeries(player,{...competitionState,buckets:[...competitionState.buckets]})})).filter(e=>e.points.length);
   const target=$("#competition-chart");
   if(!entries.length){target.innerHTML='<div class="empty-chart">No competition editions match these restrictions.</div>';$("#competition-scorecards").innerHTML="";return;}
   const endpoint=commonEndpoint(entries.map(e=>e.points));
@@ -164,7 +178,7 @@ function renderCompetitionChart(){
   $("#competition-legend").innerHTML=entries.map(({player})=>`<span class="legend-item"><i class="dot" style="background:${player.color}"></i>${player.shortName}</span>`).join("");
   $("#competition-support-note").textContent=competitionState.common?`Common endpoint: ${competitionState.axis==="age"?endpoint.toFixed(1):Math.round(endpoint)}`:`Full available edition coverage · cutoff ${data.meta.dataCutoff}`;
   target.querySelectorAll('.competition-point').forEach(point=>{const show=e=>{const tip=$("#tooltip");tip.hidden=false;tip.innerHTML=`<strong>${point.dataset.player}</strong>Year ${point.dataset.year}<br>${competitionMetricLabels[competitionState.metric]}: ${formatMetric(Number(point.dataset.y),competitionState.metric)}<br>${point.dataset.won} won / ${point.dataset.played} played cumulative<br>${point.dataset.periodWon} / ${point.dataset.periodPlayed} in period`;tip.style.left=`${Math.min(innerWidth-230,e.clientX+12)}px`;tip.style.top=`${Math.max(8,e.clientY-90)}px`;};point.addEventListener('pointerenter',show);point.addEventListener('pointermove',show);point.addEventListener('pointerleave',()=>$("#tooltip").hidden=true);});
-  $("#competition-scorecards").innerHTML=entries.map(({player,points})=>{const p=points.at(-1),c=player.competitionCoverage;return `<article class="scorecard" style="--player:${player.color}"><div class="value">${formatMetric(p.y,competitionState.metric)}</div><h4>${player.shortName}</h4><p>${p.won} won / ${p.played} played · ${c.honoursUnmatched} unmatched honours</p></article>`;}).join("");
+  $("#competition-scorecards").innerHTML=entries.map(({player,points})=>{const p=points.at(-1),c=player.competitionCoverage,coverage=c.honoursUnmatched?`${c.honoursUnmatched} reported honour${c.honoursUnmatched===1?'':'s'} excluded: no participation evidence`:'all reported honours reconciled';return `<article class="scorecard" style="--player:${player.color}"><div class="value">${formatMetric(p.y,competitionState.metric)}</div><h4>${player.shortName}</h4><p>${p.won} won / ${p.played} played · ${coverage}</p></article>`;}).join("");
 }
 
 function renderCoverage() {
@@ -185,6 +199,7 @@ $("#competition-common-support").addEventListener("change",event=>{competitionSt
 renderPlayers();
 setupPlayerFilters();
 renderRestrictions();
+renderCompetitionRestrictions();
 renderCoverage();
 renderChart();
 renderCompetitionChart();

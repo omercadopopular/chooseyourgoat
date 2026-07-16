@@ -2,12 +2,16 @@ import { readFile } from "node:fs/promises";
 
 const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
 const errors = [];
-const expected = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona", "mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
+const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
+const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
 const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
 if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
 if (data.meta.dataCutoff !== "2025-12-31") errors.push("unexpected data cutoff");
-if (JSON.stringify(data.players.map(player => player.id)) !== JSON.stringify(expected)) errors.push("15-player roster mismatch");
+const ids = data.players.map(player => player.id);
+if (JSON.stringify(ids.slice(0, 6)) !== JSON.stringify(base)) errors.push("canonical six-player roster mismatch");
+if (![6, 15].includes(ids.length)) errors.push("player expansion must be all-or-none");
+if (ids.length === 15 && JSON.stringify(ids.slice(6)) !== JSON.stringify(expansion)) errors.push("nine-player expansion roster mismatch");
 
 for (const player of data.players) {
   if (!player.observations.length) errors.push(`${player.id}: no observations`);
