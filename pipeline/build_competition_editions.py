@@ -257,6 +257,7 @@ def main():
         if pid == "ronaldo" and not any(title["team"] == "Cruzeiro" and title["competition_name"] == "Copa do Brasil" and str(title["edition"]) == "1993" for title in player["titles"]):
             player["titles"].append({"year": 1993, "date": "1993-12-31", "age": 17.285, "bucket": "all_other_club", "competition_name": "Copa do Brasil", "team": "Cruzeiro", "edition": "1993"})
             player["titles"].sort(key=lambda title: title["date"])
+        player["coverage"]["titles"] = f"{len(player['titles'])} listed championship editions"
         entries = {}
         unresolved = []
 

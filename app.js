@@ -89,12 +89,12 @@ function renderCompetitionRestrictions(){
   $("#competition-restriction-groups").innerHTML=data.taxonomy.map(group=>`
     <fieldset class="restriction-group">
       <label class="restriction-parent"><input type="checkbox" data-competition-group="${group.id}">${group.label.replace('goals','competitions')}</label>
-      <div class="restriction-children">${group.children.map(child=>`<label class="restriction-child"><input type="checkbox" data-competition-bucket="${child.id}">${child.label}</label>`).join('')}</div>
+      <div class="restriction-children">${group.children.map(child=>`<label class="restriction-child"><input type="checkbox" data-competition-bucket="${child.id}">${child.label.replace('goals','competitions')}</label>`).join('')}</div>
     </fieldset>`).join('');
   const update=()=>{
     for(const group of data.taxonomy){const parent=document.querySelector(`[data-competition-group="${group.id}"]`);const count=group.children.filter(c=>competitionState.buckets.has(c.id)).length;parent.checked=count===group.children.length;parent.indeterminate=count>0&&count<group.children.length;}
     document.querySelectorAll('[data-competition-bucket]').forEach(i=>i.checked=competitionState.buckets.has(i.dataset.competitionBucket));
-    const labels=data.taxonomy.flatMap(g=>g.children).filter(c=>competitionState.buckets.has(c.id)).map(c=>c.label);$("#competition-restriction-summary").textContent=labels.length?`${labels.length} competition categories included: ${labels.join(' · ')}`:'No competition categories selected.';
+    const labels=data.taxonomy.flatMap(g=>g.children).filter(c=>competitionState.buckets.has(c.id)).map(c=>c.label.replace('goals','competitions'));$("#competition-restriction-summary").textContent=labels.length?`${labels.length} competition categories included: ${labels.join(' · ')}`:'No competition categories selected.';
   };
   document.querySelectorAll('[data-competition-bucket]').forEach(input=>input.addEventListener('change',()=>{input.checked?competitionState.buckets.add(input.dataset.competitionBucket):competitionState.buckets.delete(input.dataset.competitionBucket);update();renderCompetitionChart();}));
   document.querySelectorAll('[data-competition-group]').forEach(input=>input.addEventListener('change',()=>{const group=data.taxonomy.find(g=>g.id===input.dataset.competitionGroup);group.children.forEach(c=>input.checked?competitionState.buckets.add(c.id):competitionState.buckets.delete(c.id));update();renderCompetitionChart();}));
