@@ -1,4 +1,4 @@
-import { buildSeries, commonEndpoint, formatMetric, lastAtOrBefore, metricLabels, trimToCommon } from "./src/metrics.js";
+import { buildCompetitionSeries, buildSeries, commonEndpoint, competitionMetricLabels, formatMetric, lastAtOrBefore, metricLabels, trimToCommon } from "./src/metrics.js";
 
 const data = await fetch("./data/web_dataset.json").then(response => response.json());
 const allBuckets = data.taxonomy.flatMap(group => group.children.map(child => child.id));
@@ -9,6 +9,7 @@ const state = {
   axis: "age",
   common: true
 };
+const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true};
 const $ = selector => document.querySelector(selector);
 const playerGrid = $("#player-grid");
 
@@ -24,6 +25,7 @@ function renderPlayers() {
     else if (!state.selected.has(id) && state.selected.size < 4) state.selected.add(id);
     renderPlayers();
     renderChart();
+    renderCompetitionChart();
   }));
 }
 
@@ -54,11 +56,13 @@ function renderRestrictions() {
     input.checked ? state.buckets.add(input.dataset.bucket) : state.buckets.delete(input.dataset.bucket);
     updateRestrictionState();
     renderChart();
+    renderCompetitionChart();
   }));
   document.querySelectorAll("[data-group]").forEach(input => input.addEventListener("change", () => {
     setGroup(input.dataset.group, input.checked);
     updateRestrictionState();
     renderChart();
+    renderCompetitionChart();
   }));
   document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => {
     state.buckets.clear();
@@ -66,6 +70,7 @@ function renderRestrictions() {
     else setGroup(button.dataset.preset, true);
     updateRestrictionState();
     renderChart();
+    renderCompetitionChart();
   }));
   updateRestrictionState();
 }
@@ -130,6 +135,25 @@ function renderScorecards(entries, endpoint) {
   }).join("");
 }
 
+function renderCompetitionChart(){
+  let entries=data.players.filter(p=>state.selected.has(p.id)).map(player=>({player,points:buildCompetitionSeries(player,{...competitionState,buckets:[...state.buckets]})})).filter(e=>e.points.length);
+  const target=$("#competition-chart");
+  if(!entries.length){target.innerHTML='<div class="empty-chart">No competition editions match these restrictions.</div>';$("#competition-scorecards").innerHTML="";return;}
+  const endpoint=commonEndpoint(entries.map(e=>e.points));
+  if(competitionState.common){const trimmed=trimToCommon(entries.map(e=>e.points));entries=entries.map((e,i)=>({...e,points:trimmed[i]})).filter(e=>e.points.length);}
+  const all=entries.flatMap(e=>e.points),xMin=Math.min(...all.map(p=>p.x)),xMax=Math.max(...all.map(p=>p.x)),yMax=Math.max(...all.map(p=>p.y))*1.08||1;
+  const W=1000,H=420,pad={l:58,r:25,t:18,b:42},x=v=>pad.l+(v-xMin)/(xMax-xMin||1)*(W-pad.l-pad.r),y=v=>H-pad.b-v/(yMax||1)*(H-pad.t-pad.b);
+  const ticks=Array.from({length:6},(_,i)=>yMax*i/5),xTicks=Array.from({length:6},(_,i)=>xMin+(xMax-xMin)*i/5);
+  const paths=entries.map(({player,points})=>`<path class="series" stroke="${player.color}" d="${linePath(points,x,y)}"/>${points.map((p,i)=>`<circle class="point competition-point" tabindex="0" data-player="${player.shortName}" data-year="${p.year}" data-y="${p.y}" data-played="${p.played}" data-won="${p.won}" data-period-played="${p.periodPlayed}" data-period-won="${p.periodWon}" cx="${x(p.x)}" cy="${y(p.y)}" r="${i===points.length-1?5:3.5}" fill="${player.color}"/>`).join("")}`).join("");
+  target.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${ticks.map(v=>`<line class="gridline" x1="${pad.l}" x2="${W-pad.r}" y1="${y(v)}" y2="${y(v)}"/><text class="axis-label" x="${pad.l-10}" y="${y(v)+3}" text-anchor="end">${formatMetric(v,competitionState.metric)}</text>`).join("")}${xTicks.map(v=>`<text class="axis-label" x="${x(v)}" y="${H-12}" text-anchor="middle">${competitionState.axis==="age"?v.toFixed(0):Math.round(v)}</text>`).join("")}${paths}</svg>`;
+  $("#competition-chart-kicker").textContent=competitionMetricLabels[competitionState.metric].toUpperCase();
+  $("#competition-chart-title").textContent=`By ${competitionState.axis==="age"?"age":"competitions played"}`;
+  $("#competition-legend").innerHTML=entries.map(({player})=>`<span class="legend-item"><i class="dot" style="background:${player.color}"></i>${player.shortName}</span>`).join("");
+  $("#competition-support-note").textContent=competitionState.common?`Common endpoint: ${competitionState.axis==="age"?endpoint.toFixed(1):Math.round(endpoint)}`:`Full available edition coverage · cutoff ${data.meta.dataCutoff}`;
+  target.querySelectorAll('.competition-point').forEach(point=>{const show=e=>{const tip=$("#tooltip");tip.hidden=false;tip.innerHTML=`<strong>${point.dataset.player}</strong>Year ${point.dataset.year}<br>${competitionMetricLabels[competitionState.metric]}: ${formatMetric(Number(point.dataset.y),competitionState.metric)}<br>${point.dataset.won} won / ${point.dataset.played} played cumulative<br>${point.dataset.periodWon} / ${point.dataset.periodPlayed} in period`;tip.style.left=`${Math.min(innerWidth-230,e.clientX+12)}px`;tip.style.top=`${Math.max(8,e.clientY-90)}px`;};point.addEventListener('pointerenter',show);point.addEventListener('pointermove',show);point.addEventListener('pointerleave',()=>$("#tooltip").hidden=true);});
+  $("#competition-scorecards").innerHTML=entries.map(({player,points})=>{const p=points.at(-1),c=player.competitionCoverage;return `<article class="scorecard" style="--player:${player.color}"><div class="value">${formatMetric(p.y,competitionState.metric)}</div><h4>${player.shortName}</h4><p>${p.won} won / ${p.played} played · ${c.honoursUnmatched} unmatched honours</p></article>`;}).join("");
+}
+
 function renderCoverage() {
   $("#coverage-body").innerHTML = data.players.map(player => `<tr><td><strong>${player.name}</strong></td><td>${player.coverage.club}</td><td>${player.coverage.national}</td><td>${player.coverage.titles}</td><td><span class="badge">Sourced</span></td></tr>`).join("");
 }
@@ -142,8 +166,11 @@ $("#common-support").addEventListener("change", event => {
   state.common = event.target.checked;
   renderChart();
 });
+[["#competition-metric-select","metric"],["#competition-axis-select","axis"]].forEach(([selector,key])=>$(selector).addEventListener("change",event=>{competitionState[key]=event.target.value;renderCompetitionChart();}));
+$("#competition-common-support").addEventListener("change",event=>{competitionState.common=event.target.checked;renderCompetitionChart();});
 
 renderPlayers();
 renderRestrictions();
 renderCoverage();
 renderChart();
+renderCompetitionChart();

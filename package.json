@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
+    "build:competitions": "python pipeline/build_competition_editions.py",
     "check": "node scripts/validate-data.js && node --test",
     "serve": "npx serve ."
   }
 }
-

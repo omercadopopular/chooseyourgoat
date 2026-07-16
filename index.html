@@ -93,6 +93,30 @@
 
         <div class="scorecards" id="scorecards"></div>
         <p class="restriction-summary">Rate curves can be normalized by age or cumulative appearances. Marginal averages use the matches in each dated season/calendar-year observation; cumulative averages use every selected match through that point.</p>
+
+        <div class="section-heading competition-heading">
+          <div><span class="kicker">02 / COMPETITION RECORD</span><h2>Winning the competitions entered</h2></div>
+          <p>An edition counts only when participation is documented by an appearance or bench listing. Friendlies are excluded. The competition-family choices above apply here too.</p>
+        </div>
+        <div class="control-panel">
+          <label>Competition measure
+            <select id="competition-metric-select">
+              <option value="competitionsWon">Cumulative competitions won</option>
+              <option value="marginalCompetitionWinRate">Marginal won / played</option>
+              <option value="cumulativeCompetitionWinRate">Cumulative won / played</option>
+            </select>
+          </label>
+          <label>Normalize by
+            <select id="competition-axis-select"><option value="competitionCount">Competitions played</option><option value="age">Age</option></select>
+          </label>
+          <label class="common-toggle"><input id="competition-common-support" type="checkbox" checked /><span>Common support only</span></label>
+        </div>
+        <div class="chart-shell">
+          <div class="chart-meta"><div><span id="competition-chart-kicker">CUMULATIVE COMPETITIONS WON</span><h3 id="competition-chart-title">By competitions played</h3></div><div class="legend" id="competition-legend"></div></div>
+          <div id="competition-chart" class="chart" role="img" aria-label="Interactive competition comparison chart"></div>
+          <div class="chart-footer"><span id="competition-support-note"></span><span>Appearance-confirmed edition coverage</span></div>
+        </div>
+        <div class="scorecards" id="competition-scorecards"></div>
       </section>
 
       <section class="method-section" id="method">

@@ -421,6 +421,7 @@ select {
   gap: 12px;
   margin-top: 14px;
 }
+.competition-heading { margin-top: 90px; }
 .scorecard {
   border-top: 4px solid var(--player);
   background: var(--white);

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { buildSeries, commonEndpoint, formatMetric, trimToCommon } from "../src/metrics.js";
+import { buildCompetitionSeries, buildSeries, commonEndpoint, formatMetric, trimToCommon } from "../src/metrics.js";
 
 const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
 const players = data.players;
@@ -63,4 +63,19 @@ test("common support trims every populated series", () => {
 test("rates format with two decimal places", () => {
   assert.equal(formatMetric(.375, "goalsPerGame"), "0.38");
   assert.equal(formatMetric(null, "goalsPerGame"), "N/A");
+});
+
+test("competition editions require participation and win rates are bounded", () => {
+  for (const player of players) {
+    assert.ok(player.competitions.length > 0);
+    assert.ok(player.competitions.every(edition => edition.appearances > 0 || edition.bench_listings > 0));
+    for (const metric of ["marginalCompetitionWinRate", "cumulativeCompetitionWinRate"]) {
+      const series=buildCompetitionSeries(player,{metric,axis:"competitionCount",buckets:allBuckets});
+      assert.ok(series.every(point => point.y >= 0 && point.y <= 1));
+    }
+  }
+});
+
+test("friendlies never count as competition editions", () => {
+  for (const player of players) assert.ok(player.competitions.every(edition => edition.bucket !== "national_team_friendlies" && edition.competition_family !== "club_friendly"));
 });

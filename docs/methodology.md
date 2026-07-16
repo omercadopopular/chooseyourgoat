@@ -41,11 +41,18 @@ both. Own goals are not attributed to the compared player.
 ## Titles
 
 The current `titles.csv` records championship editions listed in public player
-honours. Runner-up finishes and individual awards are excluded. The field
-`participation_status=listed_in_player_honours` is deliberately cautious: it
-does not assert that the player appeared in that edition. A later match-level
-edition ledger should add at least `squad_member`, `appeared_in_edition`, and
-`appeared_in_final` as separate facts.
+honours. Runner-up finishes and individual awards are excluded. A competition
+edition is counted as played only when the player has a documented appearance
+or is named on the bench. The current denominator is appearance-confirmed; the
+schema separately records bench listings as lineup sources become available.
+Friendlies and tours are excluded. A win enters the numerator only when a
+participated edition reconciles to the player's honours. Unmatched honours are
+reported as coverage gaps and excluded.
+
+- Marginal competition win rate = editions won in the current calendar period
+  / editions played in that period.
+- Cumulative competition win rate = editions won through the point / editions
+  played through the point.
 
 ## Common support
 

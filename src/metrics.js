@@ -5,6 +5,12 @@ export const metricLabels = {
   titles: "Cumulative titles won"
 };
 
+export const competitionMetricLabels = {
+  competitionsWon: "Cumulative competitions won",
+  marginalCompetitionWinRate: "Marginal competitions won / played",
+  cumulativeCompetitionWinRate: "Cumulative competitions won / played"
+};
+
 const dayMs = 86_400_000;
 
 function ageAtYearEnd(born, year) {
@@ -50,6 +56,22 @@ export function buildSeries(player, { metric = "goals", axis = "age", buckets = 
   }).filter(point => point.x >= 0 && point.y !== null && (metric === "titles" || point.appearances > 0));
 }
 
+export function buildCompetitionSeries(player, { metric = "competitionsWon", axis = "competitionCount", buckets = [] } = {}) {
+  const selected=new Set(buckets); const byYear=new Map();
+  for(const edition of player.competitions||[]){
+    if(!selected.has(edition.bucket)) continue;
+    const row=byYear.get(edition.year)||{year:edition.year,played:0,won:0};
+    row.played+=1; row.won+=edition.won?1:0; byYear.set(edition.year,row);
+  }
+  let played=0,won=0;
+  return [...byYear.values()].sort((a,b)=>a.year-b.year).map(row=>{
+    played+=row.played; won+=row.won;
+    const age=ageAtYearEnd(player.born,row.year);
+    const values={competitionsWon:won,marginalCompetitionWinRate:row.played?row.won/row.played:null,cumulativeCompetitionWinRate:played?won/played:null};
+    return {x:axis==="age"?age:played,y:values[metric],year:row.year,age,played,won,periodPlayed:row.played,periodWon:row.won};
+  }).filter(p=>p.y!==null);
+}
+
 export function commonEndpoint(seriesList) {
   const populated = seriesList.filter(series => series.length);
   if (!populated.length) return null;
@@ -68,5 +90,6 @@ export function lastAtOrBefore(series, endpoint) {
 export function formatMetric(value, metric) {
   if (value == null) return "N/A";
   if (["goalsPerGame", "marginalGoalsPerGame"].includes(metric)) return value.toFixed(2);
+  if (["marginalCompetitionWinRate", "cumulativeCompetitionWinRate"].includes(metric)) return `${(value*100).toFixed(1)}%`;
   return Math.round(value).toLocaleString("en-US");
 }
