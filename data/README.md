@@ -14,8 +14,10 @@ seniority and source treatment. Users choose the comparison universe.
 - RSSSF chronological international records, used directly for the canonical
   six senior national-team appearance ledgers and the broad Pelé reconciliation.
 - Public career-statistics and honours tables for the nine-player expansion.
-  Club seasons are career-spanning; national-team totals are currently retained
-  at calendar-year level and fine competition allocation remains partial.
+  Club seasons are career-spanning. Complete senior national-team match ledgers
+  come from RSSSF for seven players and Transfermarkt's public performance feed
+  for Mbappé and Haaland; every cap is allocated by competition family before
+  being grouped for the browser chart.
 - `dcaribou/transfermarkt-datasets`, CC0, used for match-level Messi and
   Cristiano Ronaldo coverage from 2012 onward.
 

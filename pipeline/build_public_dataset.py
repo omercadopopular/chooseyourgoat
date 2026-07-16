@@ -122,7 +122,7 @@ def bucket_family(bucket, division=""):
         return "intercontinental_federation_cup"
     if any(name in b for name in ["campeonato paulista", "campeonato carioca", "campeonato mineiro", "campeonato gaúcho", "regional", "state league", "rio-são paulo"]):
         return "regional_league"
-    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b or b=="europe":
+    if "libertadores" in b or "continental" in b or "champions" in b or "uefa" in b or raw=="europe":
         return "continental_federation_cup"
     if "cup" in b or "copa" in b or "coppa" in b or "taça" in b or "pokal" in b or "domestic" in b:
         return "domestic_cup"
@@ -206,7 +206,7 @@ def classify_national_competition(name):
     n=clean(name).lower()
     if "world cup qual" in n: return "national_team_world_cup_qualification"
     if "world cup" in n: return "national_team_world_cup_finals"
-    if any(x in n for x in ["confederations cup","confederarions cup","finalissima","artemio franchi","copa de oro","panamerican championship","conmebol-uefa"]): return "national_team_intercontinental_championship_finals"
+    if any(x in n for x in ["confederations cup","confederation cup","confederarions cup","finalissima","artemio franchi","copa de oro","panamerican championship","conmebol-uefa"]): return "national_team_intercontinental_championship_finals"
     if any(x in n for x in ["copa américa","copa america","uefa euro","european championship","european champ","european ch.","gold cup","asian cup","africa cup of nations","ofc nations"]):
         return "national_team_continental_championship_finals" if "qual" not in n else "national_team_continental_championship_qualification"
     if "nations league" in n: return "national_team_continental_nations_league"

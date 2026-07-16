@@ -77,11 +77,14 @@ or season. Assigning them to the last year of the span would create a fictitious
 1974 jump. Every canonical output row retains a URL and granularity.
 
 The nine-player expansion uses public career-spanning club season tables and
-calendar-year senior national-team totals. Its competition-edition ledger is
-published conservatively: only named editions supported by an appearance row
-are counted, while unresolved aggregate “Other” cells and national honours
-without edition-level participation evidence remain excluded and visibly marked
-as partial reconciliation.
+complete senior national-team match ledgers. RSSSF supplies Cruyff, Baggio,
+Neymar, Lewandowski, Suárez, Puskás and Romário; Transfermarkt's public
+performance feed supplies Mbappé and Haaland. Each cap is classified before
+the match rows are grouped for the browser chart. Its competition-edition
+ledger remains conservative: only named editions supported by an appearance
+row are counted, while unresolved aggregate “Other” club cells and honours
+without edition-level participation evidence remain excluded and visibly
+marked as partial reconciliation.
 
 For the plotted Pelé “all other club goals” curve, Santos friendly and tour
 matches are allocated by calendar year using the public match-by-match ledger

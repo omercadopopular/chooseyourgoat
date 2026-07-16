@@ -24,15 +24,23 @@ function renderPlayers() {
       <span class="number">${player.eraLabel||player.years.split('–')[0]}</span><span class="check">${state.selected.has(player.id) ? "●" : "○"}</span>
       <strong>${player.shortName}</strong><small>${player.country} · ${player.years}</small>
     </button>`).join(""):'<div class="player-empty">No players match these filters.</div>';
-  $("#selected-tray").innerHTML=`<strong>${state.selected.size}/4 selected</strong>`+data.players.filter(p=>state.selected.has(p.id)).map(p=>`<span class="selected-chip">${p.shortName}</span>`).join('');
+  $("#selected-tray").innerHTML=`<strong>${state.selected.size} selected</strong>`+data.players.filter(p=>state.selected.has(p.id)).map(p=>`<span class="selected-chip">${p.shortName}</span>`).join('')+`<span class="selection-actions"><button type="button" data-select-all>Select all ${data.players.length}</button><button type="button" data-reset-selection>Reset</button></span>`;
   playerGrid.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
     const id = button.dataset.id;
     if (state.selected.has(id) && state.selected.size > 2) state.selected.delete(id);
-    else if (!state.selected.has(id) && state.selected.size < 4) state.selected.add(id);
+    else if (!state.selected.has(id)) state.selected.add(id);
     renderPlayers();
     renderChart();
     renderCompetitionChart();
   }));
+  $("[data-select-all]").addEventListener("click",()=>{
+    state.selected=new Set(data.players.map(player=>player.id));
+    renderPlayers(); renderChart(); renderCompetitionChart();
+  });
+  $("[data-reset-selection]").addEventListener("click",()=>{
+    state.selected=new Set(["pele","messi","cristiano"]);
+    renderPlayers(); renderChart(); renderCompetitionChart();
+  });
 }
 
 function setupPlayerFilters(){

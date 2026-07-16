@@ -36,7 +36,7 @@ def edition_for(name, iso):
         while target % 4 != 2 or target <= year:
             target += 1
         return str(target)
-    if "european ch" in low and "qual" in low:
+    if ("european ch" in low or "continental championship" in low) and "qual" in low:
         target = year
         while target % 4 != 0 or target <= year:
             target += 1
@@ -58,6 +58,7 @@ ALIASES = {
     "europeanchampionship": "europeanchampionship",
     "uefanationsleague": "nationsleague", "nationsleague": "nationsleague",
     "fifaconfederationscup": "confederationscup", "confederationscup": "confederationscup",
+    "confederationcup": "confederationscup",
     "confederarionscup": "confederationscup",
     "torneiroriosaopaulo": "riosaopaulo", "torneioriosaopaulo": "riosaopaulo", "riosaopaulo": "riosaopaulo",
     "campeonatobrasileiro": "campeonatobrasileiro", "campeonatobrasileiroseriea": "campeonatobrasileiro",
@@ -69,6 +70,7 @@ ALIASES = {
     "fifaworldyouthchampionship": "worldyouthchampionship",
     "copadelgeneralisimo": "copadelrey",
     "seriea": "campeonatobrasileiro", "iiiligagroupi": "iiiliga",
+    "centraleuropeaninternationalcup": "internationalcup", "internationalcup": "internationalcup",
 }
 
 
@@ -340,6 +342,24 @@ def main():
             entry = make_entry("national", team, name, edition, bucket, len(rows), 0, rows[0]["source_url"], "appearance", "RSSSF match-level appearance ledger")
             entry["first_date"] = min(row["date_iso"] for row in rows)
             entry["last_date"] = max(row["date_iso"] for row in rows)
+            add(entry)
+
+        # The expansion's chart observations are generated from complete
+        # match ledgers and retain each group's first/last match date. Convert
+        # those non-friendly groups into the same named edition ledger used by
+        # the canonical six.
+        expansion_groups = defaultdict(list)
+        for observation in player["observations"]:
+            if observation.get("source_granularity") != "calendar_year_from_match_ledger":
+                continue
+            if observation["bucket"] == "national_team_friendlies":
+                continue
+            edition = edition_for(observation["competition_name"], observation.get("first_date", observation["period_end"]))
+            expansion_groups[(observation["team"], observation["competition_name"], edition, observation["bucket"])].append(observation)
+        for (team, name, edition, bucket), rows in expansion_groups.items():
+            entry = make_entry("national", team, name, edition, bucket, sum(int(row["appearances"]) for row in rows), 0, rows[0].get("source_url", ""), "appearance", "complete public match ledger")
+            entry["first_date"] = min(row.get("first_date", row["period_end"]) for row in rows)
+            entry["last_date"] = max(row.get("last_date", row["period_end"]) for row in rows)
             add(entry)
 
         for team, name, edition, bucket, apps in YOUTH.get(pid, []):

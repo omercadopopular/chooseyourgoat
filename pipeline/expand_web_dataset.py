@@ -1,14 +1,14 @@
 """Append the first nine-player expansion from cached public career pages.
 
-Club records are season/competition tables. National records without a complete
-match ledger are deliberately placed in national_team_other rather than being
-invented into finer competition families.
+Club records are season/competition tables. Senior national-team records come
+from complete match ledgers and are allocated to the selectable competition
+families before being grouped into calendar-year chart observations.
 """
 from pathlib import Path
 import json,re
 import pandas as pd
 from lxml import html
-from build_public_dataset import clean,number,flatten_columns,bucket_family,season_end_year,user_bucket,title_family,DATA_CUTOFF
+from build_public_dataset import clean,number,flatten_columns,bucket_family,season_end_year,user_bucket,title_family,classify_national_competition,DATA_CUTOFF
 
 ROOT=Path(__file__).resolve().parents[1]; RAW=ROOT/'data/raw'
 PLAYERS={
@@ -31,6 +31,25 @@ TEAM_ALIASES={
 ('romario','PSV Eindhoven'):'PSV',
 ('romario','Al-Sadd'):'Al-Sadd (loan)',
 ('romario','América-RJ'):'America-RJ',
+}
+RSSSF_NATIONAL={
+'cruyff':('cruyff_rsssf_intl.html',48,33,'Netherlands','https://www.rsssf.org/miscellaneous/cruijff-intlg.html'),
+'baggio':('baggio_rsssf_intl.html',56,27,'Italy','https://www.rsssf.org/miscellaneous/rbaggio-intlg.html'),
+'neymar':('neymar_rsssf_intl.html',128,79,'Brazil','https://www.rsssf.org/miscellaneous/neymar-intlg.html'),
+'lewandowski':('lewandowski_rsssf_intl.html',163,88,'Poland','https://www.rsssf.org/miscellaneous/lewandowski-intlg.html'),
+'suarez':('suarez_rsssf_intl.html',143,69,'Uruguay','https://www.rsssf.org/miscellaneous/bijtertje-intlg.html'),
+'puskas':('puskas_rsssf_intl.html',89,84,'Hungary','https://www.rsssf.org/miscellaneous/puskas-intlg.html'),
+'romario':('romario_rsssf_intl.html',70,55,'Brazil','https://www.rsssf.org/miscellaneous/romario-intlg.html'),
+}
+TM_NATIONAL={
+'mbappe':('mbappe_tm_performance.json','3377',94,55,'France'),
+'haaland':('haaland_tm_performance.json','3440',48,55,'Norway'),
+}
+TM_FAMILY={
+'FIWC':'national_team_world_cup_finals','EURO':'national_team_continental_championship_finals',
+'EMQ':'national_team_continental_championship_qualification','POEM':'national_team_continental_championship_qualification',
+'UNFI':'national_team_continental_nations_league','UNLA':'national_team_continental_nations_league','UNLB':'national_team_continental_nations_league',
+'FS':'national_team_friendlies',
 }
 def source(pid): return SOURCE_URLS[pid]
 def canonical_team(pid,team): return TEAM_ALIASES.get((pid,team),team)
@@ -58,6 +77,96 @@ def title_bucket_for(pid,team,competition):
     if family.startswith('national_team_'): return family
     return user_bucket(family)
 
+def national_label(family):
+    return {
+        'national_team_world_cup_finals':'World Cup',
+        'national_team_world_cup_qualification':'World Cup qualifier',
+        'national_team_continental_championship_finals':'Continental championship',
+        'national_team_continental_championship_qualification':'Continental championship qualifier',
+        'national_team_intercontinental_championship_finals':'Intercontinental championship',
+        'national_team_continental_nations_league':'Continental Nations League',
+        'national_team_olympic':'Olympic Games',
+        'national_team_friendlies':'Friendly',
+        'national_team_other':'Other national-team match',
+    }[family]
+
+def national_competition_name(pid,family,raw_name=''):
+    european={'mbappe','haaland','cruyff','baggio','lewandowski','puskas'}
+    if family=='national_team_world_cup_finals': return 'FIFA World Cup'
+    if family=='national_team_world_cup_qualification': return 'FIFA World Cup qualification'
+    if family=='national_team_continental_championship_finals': return 'UEFA European Championship' if pid in european else 'Copa América'
+    if family=='national_team_continental_championship_qualification': return 'UEFA European Championship qualification'
+    if family=='national_team_intercontinental_championship_finals': return 'FIFA Confederations Cup'
+    if family=='national_team_continental_nations_league': return 'UEFA Nations League'
+    if family=='national_team_olympic': return 'Olympic Games'
+    if family=='national_team_friendlies': return 'Friendly'
+    return clean(raw_name) or national_label(family)
+
+def grouped_national(pid,rows,source_url):
+    birth=pd.Timestamp(PLAYERS[pid]['birth']); grouped={}
+    for row in rows:
+        year=int(row['date_iso'][:4]); family=row['competition_family']; name=row['competition_name']
+        key=(year,family,row['team'],name); item=grouped.setdefault(key,{'appearances':0,'goals':0,'wins':0,'dates':[]})
+        item['appearances']+=1; item['goals']+=row['goals']; item['wins']+=row.get('outcome')=='W'
+        item['dates'].append(row['date_iso'])
+    out=[]
+    for (year,family,team,name),item in grouped.items():
+        end=pd.Timestamp(f'{year}-12-31')
+        out.append(dict(period=str(year),period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='national_team',bucket=family,competition_family=family,team=team,competition_name=name,appearances=item['appearances'],goals=item['goals'],wins=item['wins'],first_date=min(item['dates']),last_date=max(item['dates']),source_granularity='calendar_year_from_match_ledger',source_url=source_url))
+    return out
+
+def rsssf_national(pid):
+    filename,expected_caps,expected_goals,default_team,url=RSSSF_NATIONAL[pid]
+    page=html.parse(str(RAW/filename)); date_pattern=r'(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{2})'
+    source_rows=[]
+    for block in page.xpath('//pre'):
+        for line in block.text_content().splitlines():
+            match=re.match(r'^\s*(\d+)\s+(.*?)\s*'+date_pattern+r'\s{1,}(.+?)\s*$',line)
+            if match: source_rows.append((line,match))
+    rows=[]; last_cumulative=0; previous_cap=0; team=default_team
+    for line,match in source_rows:
+        local_cap=int(match.group(1))
+        if local_cap<=previous_cap:
+            last_cumulative=0
+            if pid=='puskas': team='Spain'
+        previous_cap=local_cap
+        values=[int(value) for value in re.findall(r'\d+',match.group(2).strip())]
+        if len(values)>=2: match_goals,cumulative=values[-2],values[-1]
+        elif len(values)==1: cumulative=values[0]; match_goals=max(0,cumulative-last_cumulative)
+        else: cumulative=last_cumulative; match_goals=0
+        last_cumulative=cumulative
+        raw_date=re.sub(r'\s+','',match.group(3)).replace('/','-').replace('.','-')
+        day,month,yy=map(int,raw_date.split('-')); year=1900+yy if yy>=40 else 2000+yy
+        iso=f'{year:04d}-{month:02d}-{day:02d}'
+        remainder=match.group(4).strip()
+        result_match=re.search(r'\d+\s*[-x]\s*\d+',remainder)
+        if result_match is None: raise ValueError(f'{pid}: cannot parse RSSSF row {line!r}')
+        result=result_match.group(0)
+        competition=clean(re.sub(r'^(?:\s*[\[(]\d+[\])])?\s*','',remainder[result_match.end():])) or 'Friendly'
+        scores=[int(value) for value in re.findall(r'\d+',result)[:2]]
+        outcome='W' if scores[0]>scores[1] else ('D' if scores[0]==scores[1] else 'L')
+        family=classify_national_competition(competition)
+        rows.append({'date_iso':iso,'team':team,'goals':match_goals,'outcome':outcome,'competition_family':family,'competition_name':national_competition_name(pid,family,competition)})
+    if len(rows)!=expected_caps or sum(row['goals'] for row in rows)!=expected_goals:
+        raise ValueError(f'{pid}: RSSSF ledger reconciled to {len(rows)} caps/{sum(row["goals"] for row in rows)} goals, expected {expected_caps}/{expected_goals}')
+    return grouped_national(pid,rows,url)
+
+def tm_national(pid):
+    filename,team_id,expected_caps,expected_goals,team=TM_NATIONAL[pid]
+    payload=json.loads((RAW/filename).read_text()); rows=[]
+    for item in payload['data']['performance']:
+        game=item['gameInformation']; general=item['statistics']['generalStatistics']
+        if not game['isNationalGame'] or game['date']['dateTimeUTC'][:10]>DATA_CUTOFF.isoformat(): continue
+        if str(item['clubsInformation']['club']['clubId'])!=team_id or general['participationState']!='played': continue
+        code=game['competitionId']; family=TM_FAMILY.get(code)
+        if family is None: family='national_team_world_cup_qualification' if code.startswith('WMQ') else 'national_team_other'
+        scored=item['statistics']['goalStatistics']['goalsScoredTotal'] or 0
+        club=item['clubsInformation']['club']; home=club['goalsTotal']; away=club['opponentGoalsTotal']
+        rows.append({'date_iso':game['date']['dateTimeUTC'][:10],'team':team,'goals':int(scored),'outcome':'W' if home>away else ('D' if home==away else 'L'),'competition_family':family,'competition_name':national_competition_name(pid,family)})
+    if len(rows)!=expected_caps or sum(row['goals'] for row in rows)!=expected_goals:
+        raise ValueError(f'{pid}: Transfermarkt ledger reconciled to {len(rows)} caps/{sum(row["goals"] for row in rows)} goals, expected {expected_caps}/{expected_goals}')
+    return grouped_national(pid,rows,f'https://tmapi.transfermarkt.technology/player/{payload["data"]["playerId"]}/performance-game')
+
 def observations(pid):
     cfg=PLAYERS[pid]; birth=pd.Timestamp(cfg['birth']); out=[]
     df=find_table(pid,['club','season','total'])
@@ -81,13 +190,7 @@ def observations(pid):
             competition=clean(r[division]) if division and clean(r[division]).lower() not in {'nan','total',''} else base
             fam=bucket_family(base,competition)
             out.append(dict(period=period,period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=user_bucket(fam),competition_family=fam,team=team,competition_name=competition,appearances=apps,goals=goals,wins=None,source_granularity='season_bucket',source_url=source(pid)))
-    nd=find_table(pid,['national team','year','apps','goals']); team=next(c for c in nd if c.split('|')[0]=='National team'); year=next(c for c in nd if c.split('|')[0]=='Year'); ac=next(c for c in nd if c.split('|')[-1]=='Apps'); gc=next(c for c in nd if c.split('|')[-1]=='Goals')
-    nd[team]=nd[team].replace('nan',pd.NA).ffill()
-    for _,r in nd.iterrows():
-        y=season_end_year(clean(r[year])); apps,goals=number(r[ac]),number(r[gc])
-        if not y or y>DATA_CUTOFF.year or (not apps and not goals): continue
-        end=pd.Timestamp(f'{y}-12-31')
-        out.append(dict(period=str(y),period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='national_team',bucket='national_team_other',competition_family='national_team_all_matches_unallocated',team=clean(r[team]),competition_name='All senior national-team matches',appearances=apps,goals=goals,wins=None,source_granularity='calendar_year_total_unallocated',source_url=source(pid)))
+    out.extend(tm_national(pid) if pid in TM_NATIONAL else rsssf_national(pid))
     return sorted(out,key=lambda x:(x['period_end'],x['team_context'],x['bucket']))
 
 def honours(pid,observations):
@@ -124,11 +227,12 @@ def honours(pid,observations):
     return sorted(result,key=lambda x:(x['date'],x['team'],x['competition_name']))
 
 def main():
-    p=ROOT/'data/web_dataset.json'; data=json.loads(p.read_text()); existing={x['id'] for x in data['players']}
+    p=ROOT/'data/web_dataset.json'; data=json.loads(p.read_text()); existing={x['id']:x for x in data['players']}
     for pid,cfg in PLAYERS.items():
-        if pid in existing: continue
         obs=observations(pid); titles=honours(pid,obs); years=[int(x['period_end'][:4]) for x in obs]
-        data['players'].append(dict(id=pid,**{k:cfg[k] for k in ['name','shortName','country','color','era','role']},born=cfg['birth'],years=f'{min(years)}–{max(years)}',observations=obs,titles=titles,competitions=[],competitionCoverage={'appearanceConfirmed':0,'winsMatched':0,'honoursUnmatched':len(titles),'benchConfirmed':0,'reconciliationStatus':'partial'},coverage={'club':'Career-spanning season/competition aggregates','national':'Calendar-year totals; competition allocation pending','titles':f'{len(titles)} listed championship editions; participation reconciliation partial'}))
-    data['meta']['expansionNotice']='Nine-player expansion uses career-spanning club tables. Fine national-team competition allocation and honours reconciliation remain explicitly pending where complete ledgers are unavailable.'
+        player=dict(id=pid,**{k:cfg[k] for k in ['name','shortName','country','color','era','role']},born=cfg['birth'],years=f'{min(years)}–{max(years)}',observations=obs,titles=titles,competitions=[],competitionCoverage={'appearanceConfirmed':0,'winsMatched':0,'honoursUnmatched':len(titles),'benchConfirmed':0,'reconciliationStatus':'partial'},coverage={'club':'Career-spanning season/competition aggregates','national':f'{sum(x["appearances"] for x in obs if x["team_context"]=="national_team")} senior caps allocated by competition family','titles':f'{len(titles)} listed championship editions; participation reconciliation partial'})
+        if pid in existing: existing[pid].update(player)
+        else: data['players'].append(player)
+    data['meta']['expansionNotice']='Nine-player expansion uses career-spanning club tables and complete senior national-team match ledgers allocated to selectable competition families. Competition-edition honours reconciliation remains partial where club aggregate rows cannot identify a named edition.'
     p.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')))
 if __name__=='__main__': main()

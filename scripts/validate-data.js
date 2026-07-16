@@ -4,6 +4,7 @@ const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", impor
 const errors = [];
 const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
 const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
+const expansionNationalTotals = { mbappe:[94,55], haaland:[48,55], cruyff:[48,33], baggio:[56,27], neymar:[128,79], lewandowski:[163,88], suarez:[143,69], puskas:[89,84], romario:[70,55] };
 const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
 if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
@@ -21,6 +22,12 @@ for (const player of data.players) {
     if (row.goals > row.appearances * 6) errors.push(`${player.id}: implausible goal ratio`);
   }
   for (const title of player.titles) if (!buckets.has(title.bucket)) errors.push(`${player.id}: unknown title bucket ${title.bucket}`);
+  if (expansionNationalTotals[player.id]) {
+    const rows = player.observations.filter(row => row.team_context === "national_team");
+    const actual = [rows.reduce((sum,row)=>sum+row.appearances,0), rows.reduce((sum,row)=>sum+row.goals,0)];
+    if (JSON.stringify(actual) !== JSON.stringify(expansionNationalTotals[player.id])) errors.push(`${player.id}: national ledger reconciles to ${actual.join("/")}`);
+    if (new Set(rows.map(row=>row.bucket)).size < 2) errors.push(`${player.id}: national matches are not allocated by type`);
+  }
 }
 
 if (errors.length) {

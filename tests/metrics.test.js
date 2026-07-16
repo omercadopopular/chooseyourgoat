@@ -46,6 +46,27 @@ test("club and national filters partition the web observations", () => {
   }
 });
 
+test("expansion national ledgers reconcile and are allocated by type", () => {
+  const expected = {
+    mbappe: [94, 55], haaland: [48, 55], cruyff: [48, 33],
+    baggio: [56, 27], neymar: [128, 79], lewandowski: [163, 88],
+    suarez: [143, 69], puskas: [89, 84], romario: [70, 55]
+  };
+  for (const [id, totals] of Object.entries(expected)) {
+    const rows = players.find(player => player.id === id).observations.filter(row => row.team_context === "national_team");
+    assert.deepEqual([rows.reduce((sum, row) => sum + row.appearances, 0), rows.reduce((sum, row) => sum + row.goals, 0)], totals, id);
+    assert.ok(new Set(rows.map(row => row.bucket)).size >= 2, `${id}: national matches remain unallocated`);
+    assert.ok(rows.every(row => row.bucket !== "national_team_all_matches_unallocated"), `${id}: unallocated national total`);
+  }
+});
+
+test("Europe club columns are classified as continental federation cups", () => {
+  for (const player of players.slice(6)) {
+    const rows = player.observations.filter(row => row.team_context === "club" && row.competition_name.toLowerCase() === "europe");
+    assert.ok(rows.every(row => row.bucket === "continental_federation_cup"), player.id);
+  }
+});
+
 test("Pelé's multi-year aggregate assertions are not plotted at 1974", () => {
   const pele = players.find(player => player.id === "pele");
   const otherClub = buildSeries(pele, { metric: "goals", axis: "careerSeason", buckets: ["all_other_club"] });
