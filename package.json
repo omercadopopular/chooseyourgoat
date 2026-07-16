@@ -1,0 +1,12 @@
+{
+  "name": "chooseyourgoat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/validate-data.js && node --test",
+    "serve": "npx serve ."
+  }
+}
+
