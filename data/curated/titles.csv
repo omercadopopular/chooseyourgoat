@@ -1,0 +1,155 @@
+player_id,player_name,team,competition_name,edition,competition_family,won,participation_status,source_id,source_url
+pele,Pelé,Santos,Campeonato Paulista,1958,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1960,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1961,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1962,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1964,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1965,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1967,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1968,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1969,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Paulista,1973,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Torneio Rio-São Paulo,1959,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Torneio Rio-São Paulo,1963,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Torneio Rio-São Paulo,1964,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Torneio Rio-São Paulo,1966,regional_league_or_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1961,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1962,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1963,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1964,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1965,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Campeonato Brasileiro,1968,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Copa Libertadores,1962,continental_federation_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Copa Libertadores,1963,continental_federation_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Intercontinental Cup,1962,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Intercontinental Cup,1963,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Santos,Intercontinental Supercup,1968,other_championship,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,New York Cosmos,NASL Championship,1977,national_league,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Brazil,FIFA World Cup,1958,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Brazil,FIFA World Cup,1962,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+pele,Pelé,Brazil,FIFA World Cup,1970,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_pele_honours,https://en.wikipedia.org/wiki/Pel%C3%A9
+messi,Lionel Messi,Barcelona,La Liga,2004-05,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2005-06,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2008-09,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2009-10,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2010-11,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2012-13,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2014-15,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2015-16,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2017-18,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,La Liga,2018-19,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2008-09,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2011-12,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2014-15,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2015-16,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2016-17,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2017-18,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Copa del Rey,2020-21,domestic_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2006,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2009,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2010,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2011,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2013,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2016,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,Supercopa de España,2018,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Champions League,2005-06,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Champions League,2008-09,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Champions League,2010-11,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Champions League,2014-15,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Super Cup,2009,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Super Cup,2011,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,UEFA Super Cup,2015,continental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,FIFA Club World Cup,2009,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,FIFA Club World Cup,2011,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Barcelona,FIFA Club World Cup,2015,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Paris Saint-Germain,Ligue 1,2021-22,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Paris Saint-Germain,Ligue 1,2022-23,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Paris Saint-Germain,Trophée des Champions,2022,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Inter Miami,MLS Cup,2025,national_league,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Inter Miami,Supporters' Shield,2024,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Inter Miami,Leagues Cup,2023,other_championship,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina U20,FIFA World Youth Championship,2005,other_championship,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina U23,Olympic Games,2008,other_championship,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina,FIFA World Cup,2022,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina,Copa América,2021,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina,Copa América,2024,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+messi,Lionel Messi,Argentina,Finalissima,2022,national_team_intercontinental_championship_finals,1,listed_in_player_honours,wikipedia_messi_honours,https://en.wikipedia.org/wiki/Lionel_Messi
+ronaldo,Ronaldo Nazário,Cruzeiro,Campeonato Mineiro,1994,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,PSV,KNVB Cup,1995-96,domestic_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Barcelona,Copa del Rey,1996-97,domestic_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Barcelona,Supercopa de España,1996,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Barcelona,UEFA Cup Winners' Cup,1996-97,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Inter Milan,UEFA Cup,1997-98,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Real Madrid,La Liga,2002-03,national_league,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Real Madrid,La Liga,2006-07,national_league,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Real Madrid,Supercopa de España,2003,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Real Madrid,Intercontinental Cup,2002,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Corinthians,Campeonato Paulista,2009,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Corinthians,Copa do Brasil,2009,domestic_cup,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Brazil,FIFA World Cup,1994,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Brazil,FIFA World Cup,2002,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Brazil,Copa América,1997,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Brazil,Copa América,1999,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldo,Ronaldo Nazário,Brazil,FIFA Confederations Cup,1997,national_team_intercontinental_championship_finals,1,listed_in_player_honours,wikipedia_ronaldo_honours,https://en.wikipedia.org/wiki/Ronaldo_(Brazilian_footballer)
+ronaldinho,Ronaldinho,Grêmio,Copa Sul,1999,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Grêmio,Campeonato Gaúcho,1999,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,PSG,UEFA Intertoto Cup,2001,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Barcelona,La Liga,2004-05,national_league,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Barcelona,La Liga,2005-06,national_league,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Barcelona,Supercopa de España,2005,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Barcelona,Supercopa de España,2006,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Barcelona,UEFA Champions League,2005-06,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,AC Milan,Serie A,2010-11,national_league,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Flamengo,Campeonato Carioca,2011,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Atlético Mineiro,Campeonato Mineiro,2013,regional_league_or_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Atlético Mineiro,Copa Libertadores,2013,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Atlético Mineiro,Recopa Sudamericana,2014,continental_federation_cup,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Brazil,FIFA World Cup,2002,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Brazil,Copa América,1999,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+ronaldinho,Ronaldinho,Brazil,FIFA Confederations Cup,2005,national_team_intercontinental_championship_finals,1,listed_in_player_honours,wikipedia_ronaldinho_honours,https://en.wikipedia.org/wiki/Ronaldinho
+maradona,Diego Maradona,Boca Juniors,Argentine Primera División,1981 Metropolitano,national_league,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Barcelona,Copa del Rey,1982-83,domestic_cup,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Barcelona,Copa de la Liga,1983,national_league,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Napoli,Serie A,1986-87,national_league,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Napoli,Serie A,1989-90,national_league,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Napoli,Coppa Italia,1986-87,domestic_cup,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Napoli,Supercoppa Italiana,1990,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Napoli,UEFA Cup,1988-89,continental_federation_cup,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Argentina U20,FIFA World Youth Championship,1979,other_championship,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Argentina,FIFA World Cup,1986,national_team_world_cup_finals,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+maradona,Diego Maradona,Argentina,Artemio Franchi Cup,1993,national_team_intercontinental_championship_finals,1,listed_in_player_honours,wikipedia_maradona_honours,https://en.wikipedia.org/wiki/Diego_Maradona
+cristiano,Cristiano Ronaldo,Sporting CP,Supertaça Cândido de Oliveira,2002,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,FA Cup,2003-04,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,Football League Cup,2005-06,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,Premier League,2006-07,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,FA Community Shield,2007,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,Premier League,2007-08,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,UEFA Champions League,2007-08,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,FIFA Club World Cup,2008,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,Premier League,2008-09,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Manchester United,Football League Cup,2008-09,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,Copa del Rey,2010-11,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,La Liga,2011-12,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,Supercopa de España,2012,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,Copa del Rey,2013-14,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Champions League,2013-14,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Super Cup,2014,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,FIFA Club World Cup,2014,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Champions League,2015-16,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Portugal,UEFA European Championship,2016,national_team_continental_championship_finals,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,FIFA Club World Cup,2016,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,La Liga,2016-17,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Champions League,2016-17,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Super Cup,2017,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,Supercopa de España,2017,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,FIFA Club World Cup,2017,intercontinental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Real Madrid,UEFA Champions League,2017-18,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Juventus,Supercoppa Italiana,2018,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Juventus,Serie A,2018-19,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Portugal,UEFA Nations League,2018-19,national_team_continental_nations_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Juventus,Serie A,2019-20,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Juventus,Supercoppa Italiana,2020,domestic_super_cup_or_shield,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Juventus,Coppa Italia,2020-21,domestic_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Al-Nassr,Arab Club Champions Cup,2023,continental_federation_cup,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Portugal,UEFA Nations League,2024-25,national_team_continental_nations_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo
+cristiano,Cristiano Ronaldo,Al-Nassr,Saudi Pro League,2025-26,national_league,1,listed_in_player_honours,wikipedia_cristiano_honours,https://en.wikipedia.org/wiki/List_of_career_achievements_by_Cristiano_Ronaldo

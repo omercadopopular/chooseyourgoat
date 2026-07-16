@@ -1,45 +1,59 @@
 # Methodology
 
-## Prototype status
+## Unit of comparison
 
-The current website contains synthetic season-level fixtures. They exist to validate the interface, normalization logic and disclosure design. They are not claims about the six players' true career totals.
+The product compares documented football records, not a source-imposed class
+called “official.” Every record has a team context, named competition, mapped
+competition family, seniority, source, and source granularity. Users construct
+their comparison universe by selecting families.
 
-## Production definitions
+The national-team choices are World Cup finals, World Cup qualification,
+continental championship finals, continental championship qualification,
+intercontinental championship finals, continental Nations League, Olympic,
+friendlies, and other. “Intercontinental championship finals” includes the FIFA
+Confederations Cup, Finalissima, Artemio Franchi Cup, and comparable senior
+competitions between continental champions.
 
-### Appearance
+The club choices are national league, continental federation cup,
+intercontinental federation cup, regional league, and all other club matches.
+Domestic cups and super cups are retained internally and roll up to “all other”
+unless the interface exposes the finer controls.
 
-An appearance is an official senior match in which the player entered the field. An unused substitute does not count. Youth, reserve, testimonial and unofficial tour matches are excluded from the default universe.
+## Metrics
 
-### Common support
+- Goals per game = selected goals / selected appearances.
+- Marginal season rate = goals in that season / appearances in that season.
+- Cumulative rate at appearance *n* = goals through appearance *n* / *n*.
+- Cumulative rate by age uses exact match dates where available. A season-level
+  source cannot support exact age curves and must be labelled as approximate or
+  omitted from that view.
+- Match win share = selected appearances in team wins / selected appearances.
+- Tournament win share = entered-and-won editions / entered editions.
 
-When several players are normalized by age, appearances or career season, the default chart stops at the greatest point observed for all selected players. This prevents a retirement total from being compared with an active or truncated career at a different exposure.
+Penalty-shootout kicks are not player goals. A match result retains regulation
+or extra-time W/D/L separately from shootout advancement when the source offers
+both. Own goals are not attributed to the compared player.
 
-### Goals
+## Titles
 
-Penalty-shootout kicks are not goals. Own goals are not credited to an attacker. Production goal records will follow an identified match/competition source and retain disputes.
+The current `titles.csv` records championship editions listed in public player
+honours. Runner-up finishes and individual awards are excluded. The field
+`participation_status=listed_in_player_honours` is deliberately cautious: it
+does not assert that the player appeared in that edition. A later match-level
+edition ledger should add at least `squad_member`, `appeared_in_edition`, and
+`appeared_in_final` as separate facts.
 
-### Assists
+## Common support
 
-Assist definitions differ between providers and were not consistently recorded historically. Production records will store the provider's definition and field-level coverage. Rates will use covered games or minutes only. Unknown assists will display as unavailable rather than zero.
+When normalizing by age, appearances, or career season, the default chart ends
+at the greatest point observed for every selected player under the same filters.
+Users may opt into full-career lines, but unmatched tails must be visually
+marked.
 
-### Match win
+## Provenance and uncertainty
 
-The default product definition will count a shootout victory as a team win for the player's advancement experience, while retaining conventional win/draw/loss after regulation or extra time as a separate field.
-
-### Tournament entered and won
-
-An edition counts as entered when the player makes at least one on-field appearance. It counts as won when the player's registered team wins and the player has appeared in the edition. Squad-only and final-contributor variants will be stored separately.
-
-## Planned statistical universes
-
-- Official senior, combined.
-- Official club only.
-- Senior national team only.
-- All documented senior, including identifiable friendlies.
-- Domestic league, domestic cup, continental club, intercontinental club.
-- World Cup finals, national-team continental finals and qualification as separate categories.
-
-## Provenance standard
-
-Every production aggregate must be reproducible from match-level appearances and tournament editions. Each record will retain source, access date, extraction method, match status, field coverage and discrepancy notes.
-
+Season aggregates, goal events, appearance ledgers, and title lists are never
+summed merely because they share a player. They overlap and represent different
+views. Every output row retains a URL and granularity. Conflicting sources
+should be stored as parallel assertions with a discrepancy identifier and a
+written explanation, not silently resolved.

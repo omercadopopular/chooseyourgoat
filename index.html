@@ -53,7 +53,6 @@
             <select id="metric-select">
               <option value="goals">Cumulative goals</option>
               <option value="goalsPerGame">Cumulative goals / game</option>
-              <option value="assists">Cumulative assists</option>
               <option value="winShare">Match win share</option>
               <option value="trophyShare">Tournament win share</option>
             </select>
@@ -67,7 +66,7 @@
           </label>
           <label>Universe
             <select id="universe-select">
-              <option value="official">Official senior</option>
+              <option value="all">All documented categories</option>
               <option value="club">Club only</option>
               <option value="national">National team only</option>
             </select>
@@ -95,7 +94,7 @@
         <h2>Same question.<br />Same exposure.</h2>
         <div class="principles">
           <article><span>01</span><h3>Common support</h3><p>Career comparisons stop at the latest age or appearance count observed for every selected player.</p></article>
-          <article><span>02</span><h3>Unknown ≠ zero</h3><p>Historical assists are shown only for covered observations. Missing records never become zero assists.</p></article>
+          <article><span>02</span><h3>You choose the universe</h3><p>Named competition families stay separate. No source-defined status decides which matches count.</p></article>
           <article><span>03</span><h3>Trophies need denominators</h3><p>A tournament record is shown as editions won over editions entered, with exact counts beside the percentage.</p></article>
         </div>
       </section>
@@ -105,7 +104,7 @@
           <div><span class="kicker">03 / DATA COVERAGE</span><h2>Trust the gaps, too.</h2></div>
           <p>The production database will publish field-level coverage and source provenance. This prototype demonstrates the disclosure system.</p>
         </div>
-        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Goals</th><th>Results</th><th>Assists</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
+        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Goals</th><th>Results</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
       </section>
     </main>
 
@@ -114,4 +113,3 @@
     <script type="module" src="app.js"></script>
   </body>
 </html>
-

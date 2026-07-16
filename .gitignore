@@ -1,4 +1,3 @@
-node_modules/
-.DS_Store
-coverage/
-
+data/raw/
+pipeline/__pycache__/
+*.pyc

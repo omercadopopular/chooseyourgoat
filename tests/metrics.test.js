@@ -17,8 +17,8 @@ test("all six requested players exist", () => {
 
 test("cumulative counts never decrease", () => {
   for (const player of players) {
-    for (const metric of ["goals", "assists"]) {
-      const series = buildSeries(player, { metric, axis: "careerSeason", universe: "official" });
+    for (const metric of ["goals"]) {
+      const series = buildSeries(player, { metric, axis: "careerSeason", universe: "all" });
       series.slice(1).forEach((point, i) => assert.ok(point.y >= series[i].y, `${player.id} ${metric}`));
     }
   }
@@ -34,10 +34,10 @@ test("common support trims every series to a shared endpoint", () => {
 
 test("club and national universes partition appearances approximately", () => {
   for (const player of players) {
-    const official = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "official" }).at(-1).appearances;
+    const all = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "all" }).at(-1).appearances;
     const club = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "club" }).at(-1).appearances;
     const national = buildSeries(player, { metric: "goals", axis: "careerSeason", universe: "national" }).at(-1).appearances;
-    assert.ok(Math.abs(official - club - national) <= player.seasons.length);
+    assert.ok(Math.abs(all - club - national) <= player.seasons.length);
   }
 });
 
@@ -45,4 +45,3 @@ test("shares format as percentages", () => {
   assert.equal(formatMetric(.375, "trophyShare"), "37.5%");
   assert.equal(formatMetric(null, "assists"), "N/A");
 });
-

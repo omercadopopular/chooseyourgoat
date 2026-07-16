@@ -1,7 +1,7 @@
 import { buildSeries, commonEndpoint, formatMetric, lastAtOrBefore, metricLabels, trimToCommon } from "./src/metrics.js";
 
 const data = await fetch("./data/players.json").then(response => response.json());
-const state = { selected: new Set(["pele", "messi", "cristiano"]), metric: "goals", axis: "age", universe: "official", common: true };
+const state = { selected: new Set(["pele", "messi", "cristiano"]), metric: "goals", axis: "age", universe: "all", common: true };
 const $ = selector => document.querySelector(selector);
 const playerGrid = $("#player-grid");
 const colors = Object.fromEntries(data.players.map(player => [player.id, player.color]));
@@ -58,10 +58,9 @@ function renderScorecards(players, endpoint) {
   }).join("");
 }
 
-function renderCoverage(){ $("#coverage-body").innerHTML=data.players.map(p=>`<tr><td><strong>${p.name}</strong></td>${["goals","results","assists"].map(k=>`<td><span class="bar"><i style="width:${p.coverage[k]}%"></i></span>${p.coverage[k]}%</td>`).join("")}<td><span class="badge">${p.coverage.status}</span></td></tr>`).join(""); }
+function renderCoverage(){ $("#coverage-body").innerHTML=data.players.map(p=>`<tr><td><strong>${p.name}</strong></td>${["goals","results"].map(k=>`<td><span class="bar"><i style="width:${p.coverage[k]}%"></i></span>${p.coverage[k]}%</td>`).join("")}<td><span class="badge">${p.coverage.status}</span></td></tr>`).join(""); }
 function render(){ renderPlayers(); renderChart(); renderCoverage(); }
 
 [["#metric-select","metric"],["#axis-select","axis"],["#universe-select","universe"]].forEach(([selector,key])=>$(selector).addEventListener("change",e=>{state[key]=e.target.value;renderChart();}));
 $("#common-support").addEventListener("change",e=>{state.common=e.target.checked;renderChart();});
 render();
-

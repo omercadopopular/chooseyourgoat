@@ -1,7 +1,6 @@
 export const metricLabels = {
   goals: "Cumulative goals",
   goalsPerGame: "Cumulative goals / game",
-  assists: "Cumulative assists",
   winShare: "Match win share",
   trophyShare: "Tournament win share"
 };
@@ -18,7 +17,7 @@ export function expandPlayer(player) {
 }
 
 function applyUniverse(row, universe) {
-  if (universe === "official") return row;
+  if (universe === "all") return row;
   const clubShare = Math.min(0.9, Math.max(0.7, 0.65 + row.clubWeight * 0.05));
   const share = universe === "club" ? clubShare : 1 - clubShare;
   return {
@@ -32,7 +31,7 @@ function applyUniverse(row, universe) {
   };
 }
 
-export function buildSeries(player, { metric = "goals", axis = "age", universe = "official" } = {}) {
+export function buildSeries(player, { metric = "goals", axis = "age", universe = "all" } = {}) {
   const rows = expandPlayer(player).map(row => applyUniverse(row, universe));
   return rows.map((row, index) => {
     const history = rows.slice(0, index + 1);
