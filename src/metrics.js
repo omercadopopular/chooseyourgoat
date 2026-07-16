@@ -7,8 +7,7 @@ export const metricLabels = {
 
 export const competitionMetricLabels = {
   competitionsWon: "Cumulative competitions won",
-  marginalCompetitionWinRate: "Marginal competitions won / played",
-  cumulativeCompetitionWinRate: "Cumulative competitions won / played"
+  cumulativeCompetitionWinRate: "Cumulative average win rate"
 };
 
 const dayMs = 86_400_000;
@@ -67,7 +66,7 @@ export function buildCompetitionSeries(player, { metric = "competitionsWon", axi
   return [...byYear.values()].sort((a,b)=>a.year-b.year).map(row=>{
     played+=row.played; won+=row.won;
     const age=ageAtYearEnd(player.born,row.year);
-    const values={competitionsWon:won,marginalCompetitionWinRate:row.played?row.won/row.played:null,cumulativeCompetitionWinRate:played?won/played:null};
+    const values={competitionsWon:won,cumulativeCompetitionWinRate:played?won/played:null};
     return {x:axis==="age"?age:played,y:values[metric],year:row.year,age,played,won,periodPlayed:row.played,periodWon:row.won};
   }).filter(p=>p.y!==null);
 }
@@ -90,6 +89,6 @@ export function lastAtOrBefore(series, endpoint) {
 export function formatMetric(value, metric) {
   if (value == null) return "N/A";
   if (["goalsPerGame", "marginalGoalsPerGame"].includes(metric)) return value.toFixed(2);
-  if (["marginalCompetitionWinRate", "cumulativeCompetitionWinRate"].includes(metric)) return `${(value*100).toFixed(1)}%`;
+  if (metric === "cumulativeCompetitionWinRate") return `${(value*100).toFixed(1)}%`;
   return Math.round(value).toLocaleString("en-US");
 }

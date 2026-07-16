@@ -69,7 +69,7 @@ test("competition editions require participation and win rates are bounded", () 
   for (const player of players) {
     assert.ok(player.competitions.length > 0);
     assert.ok(player.competitions.every(edition => edition.appearances > 0 || edition.bench_listings > 0));
-    for (const metric of ["marginalCompetitionWinRate", "cumulativeCompetitionWinRate"]) {
+    for (const metric of ["cumulativeCompetitionWinRate"]) {
       const series=buildCompetitionSeries(player,{metric,axis:"competitionCount",buckets:allBuckets});
       assert.ok(series.every(point => point.y >= 0 && point.y <= 1));
     }

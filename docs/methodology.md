@@ -49,9 +49,7 @@ Friendlies and tours are excluded. A win enters the numerator only when a
 participated edition reconciles to the player's honours. Unmatched honours are
 reported as coverage gaps and excluded.
 
-- Marginal competition win rate = editions won in the current calendar period
-  / editions played in that period.
-- Cumulative competition win rate = editions won through the point / editions
+- Cumulative average win rate = editions won through the point / editions
   played through the point.
 
 ## Common support
