@@ -18,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
       - name: Validate data and run tests
         run: node scripts/validate-data.js && node --test
       - uses: actions/configure-pages@v5
