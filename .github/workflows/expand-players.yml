@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
       - run: pip install -r requirements.txt
+      - run: npm ci
       - run: python pipeline/download_public_sources.py --force
       - run: python pipeline/build_public_dataset.py
       - run: python pipeline/expand_web_dataset.py
