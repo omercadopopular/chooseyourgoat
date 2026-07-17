@@ -45,6 +45,9 @@ if (![...buckets].includes("lower_division_club") || ![...buckets].includes("nat
 
 const haalandCity = data.players.find(player=>player.id==="haaland").observations.filter(row=>row.team==="Manchester City");
 if (haalandCity.reduce((sum,row)=>sum+row.appearances,0)!==170 || haalandCity.reduce((sum,row)=>sum+row.goals,0)!==149) errors.push("haaland: Manchester City ledger must reconcile to 170 appearances/149 goals at cutoff");
+const peleCompetitions=data.players.find(player=>player.id==="pele").competitions;
+if (peleCompetitions.length!==64 || peleCompetitions.filter(row=>row.won).length!==28) errors.push("pele: competition ledger must reconcile to 28 wins/64 played");
+for (const player of data.players) if (player.competitions.some(row=>/friendl|tour matches/i.test(row.competition_name))) errors.push(`${player.id}: friendly/tour row entered competition editions`);
 
 if (errors.length) {
   console.error(errors.join("\n"));

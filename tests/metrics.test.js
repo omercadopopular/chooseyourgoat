@@ -146,8 +146,18 @@ test("competition-name aliases merge before edition counting", () => {
   assert.equal(confed1997[0].appearances,5);
 });
 
+test("Pelé's competition ledger reconciles to 28 wins from 64 played editions", () => {
+  const pele=players.find(player=>player.id==="pele");
+  assert.equal(pele.competitions.length,64);
+  assert.equal(pele.competitions.filter(edition=>edition.won).length,28);
+  const series=buildCompetitionSeries(pele,{metric:"cumulativeCompetitionWinRate",axis:"competitionCount",buckets:allBuckets});
+  assert.equal(series.at(-1).played,64);
+  assert.equal(series.at(-1).won,28);
+  assert.equal(series.at(-1).y,28/64);
+});
+
 test("friendlies never count as competition editions", () => {
-  for (const player of players) assert.ok(player.competitions.every(edition => edition.bucket !== "national_team_friendlies" && edition.competition_family !== "club_friendly"));
+  for (const player of players) assert.ok(player.competitions.every(edition => edition.bucket !== "national_team_friendlies" && edition.competition_family !== "club_friendly" && !/friendl|tour matches/i.test(edition.competition_name)),player.id);
 });
 
 test("friendlies are omitted from the competition-edition selector", async () => {
