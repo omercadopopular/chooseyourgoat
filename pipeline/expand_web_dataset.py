@@ -8,7 +8,7 @@ from pathlib import Path
 import json,re
 import pandas as pd
 from lxml import html
-from build_public_dataset import clean,number,flatten_columns,bucket_family,season_end_year,user_bucket,title_family,classify_national_competition,DATA_CUTOFF
+from build_public_dataset import clean,number,flatten_columns,bucket_family,season_end_year,user_bucket,title_family,classify_national_competition,is_lower_division_club,cristiano_partial_2025_club,WEB_TAXONOMY,DATA_CUTOFF
 
 ROOT=Path(__file__).resolve().parents[1]; RAW=ROOT/'data/raw'
 PLAYERS={
@@ -71,6 +71,8 @@ def norm(value):
 
 def title_bucket_for(pid,team,competition):
     family=title_family(competition)
+    if re.search(r'\bU\s*-?\s*\d{2}\b|\byouth\b',team,re.I):
+        return 'national_team_olympic' if 'olympic' in competition.lower() else 'national_team_youth'
     if norm(team).startswith(norm(PLAYERS[pid]['country'])):
         if 'olympic' in competition.lower(): return 'national_team_olympic'
         return family if family.startswith('national_team_') else 'national_team_other'
@@ -167,25 +169,27 @@ def tm_national(pid):
         raise ValueError(f'{pid}: Transfermarkt ledger reconciled to {len(rows)} caps/{sum(row["goals"] for row in rows)} goals, expected {expected_caps}/{expected_goals}')
     return grouped_national(pid,rows,f'https://tmapi.transfermarkt.technology/player/{payload["data"]["playerId"]}/performance-game')
 
-def haaland_partial_2025_club():
-    """Add the completed part of 2025-26 that a full-season table cannot date.
+PARTIAL_2025 = {
+    'mbappe': dict(file='mbappe_tm_performance.json', club='418', team='Real Madrid', after='2025-07-09', expected=(24,29), definitions={
+        'ES1':('La Liga','national_league'), 'CL':('UEFA Champions League','continental_federation_cup'), 'CDR':('Copa del Rey','all_other_club')}),
+    'haaland': dict(file='haaland_tm_performance.json', club='281', team='Manchester City', after='2025-07-01', expected=(24,25), definitions={
+        'GB1':('Premier League','national_league'), 'CL':('UEFA Champions League','continental_federation_cup')}),
+    'lewandowski': dict(file='lewandowski_tm_performance.json', club='131', team='Barcelona', after='2025-06-30', expected=(18,8), definitions={
+        'ES1':('La Liga','national_league'), 'CL':('UEFA Champions League','continental_federation_cup')}),
+}
 
-    The cached career table contains the completed 2025-26 season, which would
-    cross the research cutoff. The match ledger lets us include only matches
-    after the already-counted 2025 Club World Cup through 31 December 2025.
-    """
-    payload=json.loads((RAW/'haaland_tm_performance.json').read_text()); birth=pd.Timestamp(PLAYERS['haaland']['birth'])
-    definitions={
-        'GB1':('Premier League','national_league'),
-        'CL':('UEFA Champions League','continental_federation_cup'),
-    }
+def partial_2025_club(pid):
+    """Add only the dated post-table part of 2025 through the fixed cutoff."""
+    cfg=PARTIAL_2025[pid]
+    payload=json.loads((RAW/cfg['file']).read_text()); birth=pd.Timestamp(PLAYERS[pid]['birth'])
+    definitions=cfg['definitions']
     grouped={}
     for item in payload['data']['performance']:
         game=item['gameInformation']; general=item['statistics']['generalStatistics']; club=item['clubsInformation']['club']
         date=game['date']['dateTimeUTC'][:10]
-        if game['isNationalGame'] or str(club['clubId'])!='281' or general['participationState']!='played': continue
-        if not ('2025-07-01'<date<=DATA_CUTOFF.isoformat()): continue
-        if game['competitionId'] not in definitions: raise ValueError(f'haaland: unmapped 2025 club competition {game["competitionId"]}')
+        if game['isNationalGame'] or str(club['clubId'])!=cfg['club'] or general['participationState']!='played': continue
+        if not (cfg['after']<date<=DATA_CUTOFF.isoformat()): continue
+        if game['competitionId'] not in definitions: raise ValueError(f'{pid}: unmapped 2025 club competition {game["competitionId"]}')
         name,bucket=definitions[game['competitionId']]; item_group=grouped.setdefault((name,bucket),{'appearances':0,'goals':0,'wins':0,'dates':[]})
         item_group['appearances']+=1
         item_group['goals']+=int(item['statistics']['goalStatistics']['goalsScoredTotal'] or 0)
@@ -193,9 +197,10 @@ def haaland_partial_2025_club():
         item_group['dates'].append(date)
     out=[]; end=pd.Timestamp(DATA_CUTOFF)
     for (name,bucket),item in grouped.items():
-        out.append(dict(period='2025-26',period_end=DATA_CUTOFF.isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=bucket,competition_family=bucket,team='Manchester City',competition_name=name,appearances=item['appearances'],goals=item['goals'],wins=item['wins'],first_date=min(item['dates']),last_date=max(item['dates']),source_granularity='partial_season_from_match_ledger',source_url='https://tmapi.transfermarkt.technology/player/418560/performance-game'))
-    if sum(row['appearances'] for row in out)!=24 or sum(row['goals'] for row in out)!=25:
-        raise ValueError('haaland: partial 2025 club ledger did not reconcile to 24 appearances/25 goals')
+        out.append(dict(period='2025-26',period_end=DATA_CUTOFF.isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=bucket,competition_family=bucket,team=cfg['team'],competition_name=name,appearances=item['appearances'],goals=item['goals'],wins=item['wins'],first_date=min(item['dates']),last_date=max(item['dates']),source_granularity='partial_season_from_match_ledger',source_url=f'https://tmapi.transfermarkt.technology/player/{payload["data"]["playerId"]}/performance-game'))
+    actual=(sum(row['appearances'] for row in out),sum(row['goals'] for row in out))
+    if actual!=cfg['expected']:
+        raise ValueError(f'{pid}: partial 2025 club ledger reconciled to {actual}, expected {cfg["expected"]}')
     return out
 
 def observations(pid):
@@ -220,8 +225,9 @@ def observations(pid):
             division=next((d for d in df if d.endswith('Division') and d.rsplit('|',1)[0]==base),None)
             competition=clean(r[division]) if division and clean(r[division]).lower() not in {'nan','total',''} else base
             fam=bucket_family(base,competition)
-            out.append(dict(period=period,period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=user_bucket(fam),competition_family=fam,team=team,competition_name=competition,appearances=apps,goals=goals,wins=None,source_granularity='season_bucket',source_url=source(pid)))
-    if pid=='haaland': out.extend(haaland_partial_2025_club())
+            bucket='lower_division_club' if is_lower_division_club(team,competition) else user_bucket(fam)
+            out.append(dict(period=period,period_end=end.date().isoformat(),age=round((end-birth).days/365.2425,3),team_context='club',bucket=bucket,competition_family=fam,team=team,competition_name=competition,appearances=apps,goals=goals,wins=None,source_granularity='season_bucket',source_url=source(pid)))
+    if pid in PARTIAL_2025: out.extend(partial_2025_club(pid))
     out.extend(tm_national(pid) if pid in TM_NATIONAL else rsssf_national(pid))
     return sorted(out,key=lambda x:(x['period_end'],x['team_context'],x['bucket']))
 
@@ -260,6 +266,18 @@ def honours(pid,observations):
 
 def main():
     p=ROOT/'data/web_dataset.json'; data=json.loads(p.read_text()); existing={x['id']:x for x in data['players']}
+    data['taxonomy']=WEB_TAXONOMY
+    for base_player in data['players']:
+        for row in base_player['observations']:
+            if row['team_context']=='club' and is_lower_division_club(row['team'],row.get('competition_name','')):
+                row['bucket']='lower_division_club'
+            elif row['team_context']=='national_team' and re.search(r'\bU\s*-?\s*(?:17|19|20)\b|\byouth\b',row['team'],re.I):
+                row['bucket']='national_team_youth'
+    cristiano=existing['cristiano']
+    cristiano['observations']=[row for row in cristiano['observations'] if row.get('source_granularity')!='partial_season_from_match_ledger']
+    cristiano['observations'].extend(cristiano_partial_2025_club())
+    cristiano['observations'].sort(key=lambda x:(x['period_end'],x['team_context'],x['bucket']))
+    cristiano['years']=cristiano['years'].split('–')[0]+'–2025'
     for pid,cfg in PLAYERS.items():
         obs=observations(pid); titles=honours(pid,obs); years=[int(x['period_end'][:4]) for x in obs]
         player=dict(id=pid,**{k:cfg[k] for k in ['name','shortName','country','color','era','role']},born=cfg['birth'],years=f'{min(years)}–{max(years)}',observations=obs,titles=titles,competitions=[],competitionCoverage={'appearanceConfirmed':0,'winsMatched':0,'honoursUnmatched':len(titles),'benchConfirmed':0,'reconciliationStatus':'partial'},coverage={'club':'Career-spanning season/competition aggregates','national':f'{sum(x["appearances"] for x in obs if x["team_context"]=="national_team")} senior caps allocated by competition family','titles':f'{len(titles)} listed championship editions; participation reconciliation partial'})

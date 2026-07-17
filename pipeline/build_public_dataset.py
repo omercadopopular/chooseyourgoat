@@ -383,6 +383,7 @@ def title_family(name):
 WEB_TAXONOMY = [
     {"id":"club","label":"Club goals","children":[
         {"id":"national_league","label":"National league"},
+        {"id":"lower_division_club","label":"Lower-division clubs"},
         {"id":"continental_federation_cup","label":"Continental federation cup"},
         {"id":"intercontinental_federation_cup","label":"Intercontinental federation cup"},
         {"id":"regional_league","label":"Regional league"},
@@ -396,6 +397,7 @@ WEB_TAXONOMY = [
         {"id":"national_team_intercontinental_championship_finals","label":"Intercontinental championship finals"},
         {"id":"national_team_continental_nations_league","label":"Continental Nations League"},
         {"id":"national_team_olympic","label":"Olympic"},
+        {"id":"national_team_youth","label":"Youth national teams"},
         {"id":"national_team_friendlies","label":"Friendlies"},
         {"id":"national_team_other","label":"All other national-team goals"},
     ]},
@@ -448,12 +450,60 @@ def user_bucket(family):
     if family.startswith('national_team_'): return 'national_team_other'
     return 'all_other_club'
 
+def is_lower_division_club(team, division='', seniority='senior'):
+    """Identify reserve/youth sides and senior clubs outside the top tier.
+
+    Source tables expose either the side name/seniority or a named division.
+    The classification is intentionally conservative: a club is moved only
+    when the source itself identifies a reserve/youth side or a lower tier.
+    """
+    if seniority != 'senior' or re.search(r'\b(?:B|C|II|reserves?|youth)\b', str(team), re.I):
+        return True
+    value = unicodedata.normalize('NFKD', str(division)).encode('ascii', 'ignore').decode().lower()
+    lower_tiers = (
+        'segunda division', 'segunda b', 'tercera', 'serie b', 'serie c',
+        '1. divisjon', '2. divisjon', '3. divisjon', 'ii liga', 'iii liga',
+        'usl 1st', 'usl first', 'championnat national 2', 'carioca second division',
+    )
+    return any(tier in value for tier in lower_tiers)
+
 def title_bucket(row):
     family=row['competition_family']; name=row['competition_name'].lower(); team=row['team'].lower()
     if 'olympic' in name: return 'national_team_olympic'
     if family.startswith('national_team_'): return user_bucket(family)
     if any(token in team for token in ['argentina','brazil','portugal']): return 'national_team_other'
     return user_bucket(family)
+
+def cristiano_partial_2025_club():
+    """Dated Al-Nassr matches after the last completed source-table season."""
+    payload=json.loads((RAW/'cristiano_tm_performance.json').read_text())
+    birth=pd.Timestamp(PLAYERS['cristiano']['birth'])
+    definitions={
+        'SA1':('Saudi Pro League','national_league'),
+        'SASS':('Saudi Super Cup','all_other_club'),
+        'ACL2':('AFC Champions League Two','continental_federation_cup'),
+        'SAKC':('King Cup','all_other_club'),
+    }
+    grouped={}
+    for item in payload['data']['performance']:
+        game=item['gameInformation']; general=item['statistics']['generalStatistics']; club=item['clubsInformation']['club']
+        match_date=game['date']['dateTimeUTC'][:10]
+        if game['isNationalGame'] or str(club['clubId'])!='18544' or general['participationState']!='played': continue
+        if not ('2025-06-30'<match_date<=DATA_CUTOFF.isoformat()): continue
+        if game['competitionId'] not in definitions:
+            raise ValueError(f'cristiano: unmapped 2025 club competition {game["competitionId"]}')
+        name,bucket=definitions[game['competitionId']]
+        row=grouped.setdefault((name,bucket),{'appearances':0,'goals':0,'wins':0,'dates':[]})
+        row['appearances']+=1
+        row['goals']+=int(item['statistics']['goalStatistics']['goalsScoredTotal'] or 0)
+        row['wins']+=club['goalsTotal']>club['opponentGoalsTotal']
+        row['dates'].append(match_date)
+    end=pd.Timestamp(DATA_CUTOFF); out=[]
+    for (name,bucket),row in grouped.items():
+        out.append({'period':'2025-26','period_end':DATA_CUTOFF.isoformat(),'age':round((end-birth).days/365.2425,3),'team_context':'club','bucket':bucket,'competition_family':bucket,'team':'Al-Nassr','competition_name':name,'appearances':row['appearances'],'goals':row['goals'],'wins':row['wins'],'first_date':min(row['dates']),'last_date':max(row['dates']),'source_granularity':'partial_season_from_match_ledger','source_url':f'https://tmapi.transfermarkt.technology/player/{payload["data"]["playerId"]}/performance-game'})
+    actual=(sum(row['appearances'] for row in out),sum(row['goals'] for row in out))
+    if actual!=(15,14): raise ValueError(f'cristiano: partial 2025 club ledger reconciled to {actual}, expected (15, 14)')
+    return out
 
 def build_web_bundle(season,national_appearances,title_rows,coverage):
     season=pd.DataFrame(season); national=pd.DataFrame(national_appearances); titles=pd.DataFrame(title_rows)
@@ -465,7 +515,10 @@ def build_web_bundle(season,national_appearances,title_rows,coverage):
         for _,row in club.iterrows():
             end_year=season_end_year(row.season)
             end_date=pd.Timestamp(f'{end_year}-06-30' if re.search(r'\d{4}\s*[-/]\s*\d{2}',str(row.season)) else f'{end_year}-12-31')
-            observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'club','bucket':user_bucket(row.competition_family),'competition_family':row.competition_family,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
+            lower=is_lower_division_club(row.team,row.competition_name,row.seniority)
+            bucket='lower_division_club' if lower else user_bucket(row.competition_family)
+            observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'club','bucket':bucket,'competition_family':row.competition_family,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
+        if pid=='cristiano': observations.extend(cristiano_partial_2025_club())
         country=national[national.player_id==pid].copy()
         country['year']=pd.to_datetime(country.date_iso).dt.year
         for (year,family),rows in country.groupby(['year','competition_family']):
@@ -474,7 +527,7 @@ def build_web_bundle(season,national_appearances,title_rows,coverage):
         youth=season[(season.player_id==pid)&(season.team_context=='national_team')&(season.seniority!='senior')]
         for _,row in youth.iterrows():
             year=season_end_year(row.season); end_date=pd.Timestamp(f'{year}-12-31')
-            bucket='national_team_olympic' if re.search(r'U23|Olympic',row.team,re.I) else 'national_team_other'
+            bucket='national_team_olympic' if re.search(r'U23|Olympic',row.team,re.I) else 'national_team_youth'
             observations.append({'period':str(row.season),'period_end':end_date.date().isoformat(),'age':round((end_date-birth).days/365.2425,3),'team_context':'national_team','bucket':bucket,'competition_family':bucket,'team':row.team,'competition_name':row.competition_name,'appearances':int(row.appearances),'goals':int(row.goals),'wins':None,'source_granularity':row.source_granularity})
         if pid=='pele':
             for year,apps,goals in PELE_SANTOS_FRIENDLIES_BY_YEAR:

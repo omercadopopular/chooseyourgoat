@@ -2,6 +2,11 @@ import { buildCompetitionSeries, buildSeries, commonEndpoint, competitionMetricL
 
 const data = await fetch("./data/web_dataset.json").then(response => response.json());
 const allBuckets = data.taxonomy.flatMap(group => group.children.map(child => child.id));
+const competitionTaxonomy = data.taxonomy.map(group => ({
+  ...group,
+  children: group.children.filter(child => child.id !== "national_team_friendlies")
+}));
+const competitionBuckets = competitionTaxonomy.flatMap(group => group.children.map(child => child.id));
 const state = {
   selected: new Set(["pele", "messi", "cristiano"]),
   buckets: new Set(allBuckets),
@@ -9,7 +14,7 @@ const state = {
   axis: "age",
   common: true
 };
-const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true,buckets:new Set(allBuckets)};
+const competitionState={metric:"competitionsWon",axis:"competitionCount",common:true,buckets:new Set(competitionBuckets)};
 const playerFilter={query:"",era:"all",role:"all",country:"all"};
 const $ = selector => document.querySelector(selector);
 const playerGrid = $("#player-grid");
@@ -94,19 +99,19 @@ function renderRestrictions() {
 }
 
 function renderCompetitionRestrictions(){
-  $("#competition-restriction-groups").innerHTML=data.taxonomy.map(group=>`
+  $("#competition-restriction-groups").innerHTML=competitionTaxonomy.map(group=>`
     <fieldset class="restriction-group">
       <label class="restriction-parent"><input type="checkbox" data-competition-group="${group.id}">${group.label.replace('goals','competitions')}</label>
       <div class="restriction-children">${group.children.map(child=>`<label class="restriction-child"><input type="checkbox" data-competition-bucket="${child.id}">${child.label.replace('goals','competitions')}</label>`).join('')}</div>
     </fieldset>`).join('');
   const update=()=>{
-    for(const group of data.taxonomy){const parent=document.querySelector(`[data-competition-group="${group.id}"]`);const count=group.children.filter(c=>competitionState.buckets.has(c.id)).length;parent.checked=count===group.children.length;parent.indeterminate=count>0&&count<group.children.length;}
+    for(const group of competitionTaxonomy){const parent=document.querySelector(`[data-competition-group="${group.id}"]`);const count=group.children.filter(c=>competitionState.buckets.has(c.id)).length;parent.checked=count===group.children.length;parent.indeterminate=count>0&&count<group.children.length;}
     document.querySelectorAll('[data-competition-bucket]').forEach(i=>i.checked=competitionState.buckets.has(i.dataset.competitionBucket));
-    const labels=data.taxonomy.flatMap(g=>g.children).filter(c=>competitionState.buckets.has(c.id)).map(c=>c.label.replace('goals','competitions'));$("#competition-restriction-summary").textContent=labels.length?`${labels.length} competition categories included: ${labels.join(' · ')}`:'No competition categories selected.';
+    const labels=competitionTaxonomy.flatMap(g=>g.children).filter(c=>competitionState.buckets.has(c.id)).map(c=>c.label.replace('goals','competitions'));$("#competition-restriction-summary").textContent=labels.length?`${labels.length} competition categories included: ${labels.join(' · ')}`:'No competition categories selected.';
   };
   document.querySelectorAll('[data-competition-bucket]').forEach(input=>input.addEventListener('change',()=>{input.checked?competitionState.buckets.add(input.dataset.competitionBucket):competitionState.buckets.delete(input.dataset.competitionBucket);update();renderCompetitionChart();}));
-  document.querySelectorAll('[data-competition-group]').forEach(input=>input.addEventListener('change',()=>{const group=data.taxonomy.find(g=>g.id===input.dataset.competitionGroup);group.children.forEach(c=>input.checked?competitionState.buckets.add(c.id):competitionState.buckets.delete(c.id));update();renderCompetitionChart();}));
-  document.querySelectorAll('[data-competition-preset]').forEach(button=>button.addEventListener('click',()=>{competitionState.buckets.clear();if(button.dataset.competitionPreset==='all')allBuckets.forEach(b=>competitionState.buckets.add(b));else data.taxonomy.find(g=>g.id===button.dataset.competitionPreset).children.forEach(c=>competitionState.buckets.add(c.id));update();renderCompetitionChart();}));
+  document.querySelectorAll('[data-competition-group]').forEach(input=>input.addEventListener('change',()=>{const group=competitionTaxonomy.find(g=>g.id===input.dataset.competitionGroup);group.children.forEach(c=>input.checked?competitionState.buckets.add(c.id):competitionState.buckets.delete(c.id));update();renderCompetitionChart();}));
+  document.querySelectorAll('[data-competition-preset]').forEach(button=>button.addEventListener('click',()=>{competitionState.buckets.clear();if(button.dataset.competitionPreset==='all')competitionBuckets.forEach(b=>competitionState.buckets.add(b));else competitionTaxonomy.find(g=>g.id===button.dataset.competitionPreset).children.forEach(c=>competitionState.buckets.add(c.id));update();renderCompetitionChart();}));
   update();
 }
 

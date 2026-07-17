@@ -18,6 +18,9 @@ seniority and source treatment. Users choose the comparison universe.
   come from RSSSF for seven players and Transfermarkt's public performance feed
   for Mbappé and Haaland; every cap is allocated by competition family before
   being grouped for the browser chart.
+- Public Transfermarkt performance ledgers provide the dated post-table 2025
+  segments for Cristiano Ronaldo, Mbappé, Haaland and Lewandowski, and
+  appearance evidence for modern honour reconciliation.
 - `dcaribou/transfermarkt-datasets`, CC0, used for match-level Messi and
   Cristiano Ronaldo coverage from 2012 onward.
 
@@ -46,9 +49,10 @@ seniority and source treatment. Users choose the comparison universe.
   competition-edition ledger, and the selectable hierarchy.
 
 These tables are a research release, not a claim of perfect completeness.
-Every row retains its source and granularity. The live bundle labels expansion
-competition reconciliation as partial and excludes honours that lack documented
-appearance or bench evidence from its win counts.
+Every row retains its source and granularity. Competition names and team aliases
+are canonicalized before edition IDs are constructed. A player's reconciliation
+is labelled complete only when no unmatched honour or unresolved aggregate row
+remains; unsupported honours are disclosed and excluded from win counts.
 
 Do not add aggregate rows from `season_competition.csv` to match-level rows.
 They are alternative views with overlapping coverage. In particular, the

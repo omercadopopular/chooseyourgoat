@@ -10,11 +10,11 @@ their comparison universe by selecting families.
 The national-team choices are World Cup finals, World Cup qualification,
 continental championship finals, continental championship qualification,
 intercontinental championship finals, continental Nations League, Olympic,
-friendlies, and other. “Intercontinental championship finals” includes the FIFA
+age-limited youth national teams, friendlies, and other. “Intercontinental championship finals” includes the FIFA
 Confederations Cup, Finalissima, Artemio Franchi Cup, and comparable senior
 competitions between continental champions.
 
-The club choices are national league, continental federation cup,
+The club choices are national league, lower-division clubs, continental federation cup,
 intercontinental federation cup, regional league, and all other club matches.
 Domestic cups and super cups are retained internally and roll up to “all other”
 unless the interface exposes the finer controls.
@@ -49,6 +49,10 @@ table definitions and row footnotes; unresolved aggregates do not enter the
 denominator. Friendlies and tours are excluded. A win enters the numerator only
 when a participated edition reconciles to the player's honours. Reported
 honours without participation evidence are disclosed and excluded.
+Competition and team names are canonicalized before edition IDs are built, so
+source spelling and punctuation variants cannot create duplicate editions.
+Reconciliation is marked complete only when both unmatched honours and
+unresolved aggregate rows are zero.
 
 - Cumulative average win rate = editions won through the point / editions
   played through the point.
@@ -86,13 +90,12 @@ row are counted, while unresolved aggregate “Other” club cells and honours
 without edition-level participation evidence remain excluded and visibly
 marked as partial reconciliation.
 
-For Haaland, Manchester City's 2025-26 row cannot be used whole because it
-crosses the 31 December 2025 cutoff. The browser bundle therefore retains the
-completed-season table through the 2025 Club World Cup and adds the 24 club
-appearances and 25 goals from 16 August through 27 December 2025 from the dated
-Transfermarkt performance ledger. Bryne 2 and Molde 2 remain included in the
-broad club universe; excluding reserve-team records would reduce his plotted
-all-category total by 20 goals.
+The 2025-26 rows cannot be used whole because they cross the 31 December 2025
+cutoff. The browser bundle therefore retains completed-season tables and adds
+only the dated, non-overlapping post-table segments: Cristiano Ronaldo 15
+appearances/14 goals, Mbappé 24/29, Haaland 24/25, and Lewandowski 18/8.
+Haaland's Bryne 2 and Molde 2 records remain available under the separate
+lower-division club selector.
 
 For the plotted Pelé “all other club goals” curve, Santos friendly and tour
 matches are allocated by calendar year using the public match-by-match ledger

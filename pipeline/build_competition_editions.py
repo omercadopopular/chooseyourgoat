@@ -55,6 +55,7 @@ def slug(value):
 ALIASES = {
     "fifaworldcup": "worldcup", "worldcup": "worldcup",
     "uefaeuropeanchampionship": "europeanchampionship", "europeanchamp": "europeanchampionship",
+    "europeanchampionshipfinals": "europeanchampionship",
     "europeanchampionship": "europeanchampionship",
     "uefanationsleague": "nationsleague", "nationsleague": "nationsleague",
     "fifaconfederationscup": "confederationscup", "confederationscup": "confederationscup",
@@ -68,6 +69,10 @@ ALIASES = {
     "olympicgames": "olympics", "summerolympics": "olympics",
     "finalissima": "conmeboluefa", "conmeboluefa": "conmeboluefa",
     "fifaworldyouthchampionship": "worldyouthchampionship",
+    "summerolympicsgoldmedal": "olympics",
+    "uefaeuropeanunder19championship": "europeanunder19championship",
+    "u20southamericanchampionship": "southamericanunder20championship",
+    "southamericanu20championship": "southamericanunder20championship",
     "copadelgeneralisimo": "copadelrey",
     "seriea": "campeonatobrasileiro", "iiiligagroupi": "iiiliga",
     "centraleuropeaninternationalcup": "internationalcup", "internationalcup": "internationalcup",
@@ -77,6 +82,34 @@ ALIASES = {
 def canonical_name(value):
     key = slug(value)
     return ALIASES.get(key, key)
+
+
+CANONICAL_DISPLAY = {
+    "worldcup": "FIFA World Cup", "europeanchampionship": "UEFA European Championship",
+    "nationsleague": "UEFA Nations League", "confederationscup": "FIFA Confederations Cup",
+    "olympics": "Olympic Games", "worldyouthchampionship": "FIFA World Youth Championship",
+    "europeanunder19championship": "UEFA European Under-19 Championship",
+    "southamericanunder20championship": "South American U-20 Championship",
+    "riosaopaulo": "Torneio Rio-São Paulo", "campeonatobrasileiro": "Campeonato Brasileiro Série A",
+    "nasl": "North American Soccer League", "leaguecup": "Football League Cup",
+    "mlscup": "MLS Cup", "conmeboluefa": "Finalissima", "copadelrey": "Copa del Rey",
+    "internationalcup": "Central European International Cup",
+}
+
+
+def canonical_display_name(value):
+    return CANONICAL_DISPLAY.get(canonical_name(value), str(value).strip())
+
+
+TEAM_ALIASES = {
+    "psg": "Paris Saint-Germain", "parissaintgermain": "Paris Saint-Germain",
+    "psveindhoven": "PSV", "psv": "PSV", "americarj": "America-RJ",
+    "americafootballclubrj": "America-RJ", "alsadd": "Al-Sadd (loan)",
+}
+
+
+def canonical_team_name(value):
+    return TEAM_ALIASES.get(slug(value), str(value).strip())
 
 
 PRIMARY_CUP = {
@@ -227,14 +260,78 @@ OTHER = {
 }
 
 YOUTH = {
-    "messi": [("Argentina U20", "South American U-20 Championship", "2005", "national_team_other", 9), ("Argentina U20", "FIFA World Youth Championship", "2005", "national_team_other", 7), ("Argentina U23", "Olympic Games", "2008", "national_team_olympic", 5)],
-    "ronaldinho": [("Brazil U17", "South American U-17 Championship", "1997", "national_team_other", 7), ("Brazil U17", "FIFA U-17 World Championship", "1997", "national_team_other", 6), ("Brazil U20", "South American U-20 Championship", "1999", "national_team_other", 9), ("Brazil U20", "FIFA World Youth Championship", "1999", "national_team_other", 5), ("Brazil U23", "CONMEBOL Pre-Olympic Tournament", "2000", "national_team_olympic", 7), ("Brazil U23", "Olympic Games", "2000", "national_team_olympic", 4), ("Brazil U23", "Olympic Games", "2008", "national_team_olympic", 6)],
-    "maradona": [("Argentina U20", "South American U-20 Championship", "1977", "national_team_other", 3), ("Argentina U20", "South American U-20 Championship", "1979", "national_team_other", 5), ("Argentina U20", "FIFA World Youth Championship", "1979", "national_team_other", 6)],
+    "messi": [("Argentina U20", "South American U-20 Championship", "2005", "national_team_youth", 9), ("Argentina U20", "FIFA World Youth Championship", "2005", "national_team_youth", 7), ("Argentina U23", "Olympic Games", "2008", "national_team_olympic", 5)],
+    "ronaldinho": [("Brazil U17", "South American U-17 Championship", "1997", "national_team_youth", 7), ("Brazil U17", "FIFA U-17 World Championship", "1997", "national_team_youth", 6), ("Brazil U20", "South American U-20 Championship", "1999", "national_team_youth", 9), ("Brazil U20", "FIFA World Youth Championship", "1999", "national_team_youth", 5), ("Brazil U23", "CONMEBOL Pre-Olympic Tournament", "2000", "national_team_olympic", 7), ("Brazil U23", "Olympic Games", "2000", "national_team_olympic", 4), ("Brazil U23", "Olympic Games", "2008", "national_team_olympic", 6)],
+    "maradona": [("Argentina U20", "South American U-20 Championship", "1977", "national_team_youth", 3), ("Argentina U20", "South American U-20 Championship", "1979", "national_team_youth", 5), ("Argentina U20", "FIFA World Youth Championship", "1979", "national_team_youth", 6)],
 }
 
 BENCH = {
     "cristiano": [("Sporting CP", "Supertaça Cândido de Oliveira", "2002", "all_other_club", "https://en.wikipedia.org/wiki/2002_Superta%C3%A7a_C%C3%A2ndido_de_Oliveira")],
     "ronaldo": [("Brazil", "World Cup", "1994", "national_team_world_cup_finals", "https://pt.wikipedia.org/wiki/Final_da_Copa_do_Mundo_FIFA_de_1994")],
+}
+
+# Participation evidence that is more granular than the cached career-table
+# columns. Modern entries are transcribed from the cached public Transfermarkt
+# match ledgers; historical entries cite a public match/tournament record and
+# use the minimum documented appearance when a full ledger is unavailable.
+HONOUR_PARTICIPATION = {
+    "ronaldinho": [("club", "Paris Saint-Germain", "UEFA Intertoto Cup", "2001", "continental_federation_cup", 1, "https://en.wikipedia.org/wiki/2001_UEFA_Intertoto_Cup", "documented appearance and two goals in PSG's first leg against Rapid Wien")],
+    "mbappe": [
+        ("national", "France U19", "UEFA European Under-19 Championship", "2016", "national_team_youth", 5, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "five match-ledger appearances"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2019", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "match-ledger appearance"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2020", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "played 13 January 2021 in the 2020 edition"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2023", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "played 3 January 2024 in the 2023 edition"),
+        ("club", "Real Madrid", "FIFA Intercontinental Cup", "2024", "intercontinental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "match-ledger appearance"),
+        ("club", "Real Madrid", "UEFA Super Cup", "2024", "continental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/342229/performance-game", "match-ledger appearance"),
+    ],
+    "haaland": [
+        ("club", "Manchester City", "UEFA Super Cup", "2023", "continental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/418560/performance-game", "match-ledger appearance"),
+        ("club", "Manchester City", "FA Community Shield", "2024", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/418560/performance-game", "match-ledger appearance"),
+    ],
+    "cruyff": [
+        ("club", "Ajax", "European Super Cup", "1972", "continental_federation_cup", 1, "https://en.wikipedia.org/wiki/1972_European_Super_Cup", "documented appearance in the two-legged edition"),
+        ("club", "Ajax", "Intercontinental Cup", "1972", "intercontinental_federation_cup", 1, "https://en.wikipedia.org/wiki/1972_Intercontinental_Cup", "documented appearance in the two-legged edition"),
+    ],
+    "neymar": [
+        ("national", "Brazil U20", "South American U-20 Championship", "2011", "national_team_youth", 7, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "seven match-ledger appearances"),
+        ("club", "Santos", "Recopa Sudamericana", "2012", "continental_federation_cup", 2, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "two match-ledger appearances"),
+        ("club", "Barcelona", "Supercopa de España", "2013", "all_other_club", 2, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "two match-ledger appearances"),
+        ("club", "Barcelona", "FIFA Club World Cup", "2015", "intercontinental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "match-ledger appearance"),
+        ("national", "Brazil U23", "Olympic Games", "2016", "national_team_olympic", 6, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "six match-ledger appearances"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2018", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "match-ledger appearance"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2020", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "played 13 January 2021 in the 2020 edition"),
+        ("club", "Paris Saint-Germain", "Trophée des Champions", "2022", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/68290/performance-game", "match-ledger appearance"),
+    ],
+    "lewandowski": [
+        ("club", "Lech Poznań", "Polish Super Cup", "2009", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "match-ledger appearance"),
+        *[("club", team, "DFL-Supercup", str(year), "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "match-ledger appearance") for team, year in [("Borussia Dortmund", 2013), ("Bayern Munich", 2016), ("Bayern Munich", 2017), ("Bayern Munich", 2018), ("Bayern Munich", 2020), ("Bayern Munich", 2021)]],
+        ("club", "Bayern Munich", "FIFA Club World Cup", "2020", "intercontinental_federation_cup", 2, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "two February 2021 match-ledger appearances in the 2020 edition"),
+        ("club", "Bayern Munich", "UEFA Super Cup", "2020", "continental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "match-ledger appearance"),
+        ("club", "Barcelona", "Supercopa de España", "2023", "all_other_club", 2, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "two match-ledger appearances"),
+        ("club", "Barcelona", "Supercopa de España", "2025", "all_other_club", 2, "https://tmapi.transfermarkt.technology/player/38253/performance-game", "two match-ledger appearances"),
+    ],
+    "suarez": [
+        ("club", "Barcelona", "FIFA Club World Cup", "2015", "intercontinental_federation_cup", 2, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "two match-ledger appearances"),
+        ("club", "Barcelona", "UEFA Super Cup", "2015", "continental_federation_cup", 1, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "match-ledger appearance"),
+        ("club", "Barcelona", "Supercopa de España", "2016", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "match-ledger appearance"),
+        ("club", "Barcelona", "Supercopa de España", "2018", "all_other_club", 1, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "match-ledger appearance"),
+        ("club", "Grêmio", "Campeonato Gaúcho", "2023", "regional_league", 12, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "twelve state-championship match-ledger appearances"),
+        ("club", "Grêmio", "Recopa Gaúcha", "2023", "regional_league", 1, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "match-ledger appearance"),
+        ("club", "Inter Miami", "Supporters' Shield", "2024", "national_league", 27, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "27 regular-season match-ledger appearances"),
+        ("club", "Inter Miami", "MLS Cup", "2025", "national_league", 4, "https://tmapi.transfermarkt.technology/player/44352/performance-game", "four playoff match-ledger appearances"),
+    ],
+    "puskas": [("club", "Real Madrid", "Intercontinental Cup", "1960", "intercontinental_federation_cup", 1, "https://en.wikipedia.org/wiki/1960_Intercontinental_Cup", "documented appearance and two goals in the second leg")],
+    "romario": [
+        ("national", "Brazil Youth", "U-20 South American Championship", "1985", "national_team_youth", 1, "https://en.wikipedia.org/wiki/Rom%C3%A1rio", "tournament top-scorer record confirms participation"),
+        ("club", "PSV", "Dutch Super Cup", "1992", "all_other_club", 1, "https://en.wikipedia.org/wiki/Rom%C3%A1rio", "career-table Other appearance allocated to the named edition"),
+        ("club", "Barcelona", "Supercopa de España", "1994", "all_other_club", 2, "https://en.wikipedia.org/wiki/Rom%C3%A1rio", "two career-table Other appearances allocated to the named edition"),
+    ],
+}
+
+EXCLUDED_HONOURS = {
+    ("pele", "Santos", "Torneio Rio-São Paulo", "1966"): "source ledger shows no participation; retained out of the win count",
+    ("cruyff", "Netherlands", "Tournoi de Paris", "1978"): "friendly invitational, not a qualifying competition edition",
+    ("romario", "Al-Sadd (loan)", "Qatar Crown Prince Cup", "2003"): "no documented appearance or bench listing located",
 }
 
 
@@ -267,6 +364,8 @@ def resolve_club(player_id, observation):
     if low in {"continental", "europe"}:
         return continental(player_id, team, season, apps)
     if low == "state league":
+        if player_id == "romario" and team == "America-RJ" and season == "2009":
+            return [("Campeonato Carioca Second Division", season, "lower_division_club", apps, "career-statistics state-league row identifies the lower-division edition")]
         resolved = ({"Cruzeiro": "Campeonato Mineiro", "Atlético Mineiro": "Campeonato Mineiro",
                      "Santos": "Campeonato Paulista", "Corinthians": "Campeonato Paulista",
                      "Vasco da Gama": "Campeonato Carioca", "Flamengo": "Campeonato Carioca",
@@ -283,10 +382,12 @@ def resolve_club(player_id, observation):
 
 
 def make_entry(context, team, name, edition, bucket, appearances, bench, source_url, basis, note):
+    team = canonical_team_name(team)
+    name = canonical_display_name(name)
     year = end_year(edition)
     date = f"{year}-12-31"
     return {
-        "edition_id": "|".join((context, team, name, str(edition))), "edition": str(edition), "year": year,
+        "edition_id": "|".join((context, slug(team), canonical_name(name), str(edition))), "edition": str(edition), "year": year,
         "team": team, "competition_name": name, "bucket": bucket, "appearances": appearances,
         "bench_listings": bench, "first_date": date, "last_date": date,
         "participation_confirmed": bool(appearances or bench),
@@ -306,7 +407,15 @@ def main():
         if pid == "ronaldo" and not any(title["team"] == "Cruzeiro" and title["competition_name"] == "Copa do Brasil" and str(title["edition"]) == "1993" for title in player["titles"]):
             player["titles"].append({"year": 1993, "date": "1993-12-31", "age": 17.285, "bucket": "all_other_club", "competition_name": "Copa do Brasil", "team": "Cruzeiro", "edition": "1993"})
             player["titles"].sort(key=lambda title: title["date"])
-        player["coverage"]["titles"] = f"{len(player['titles'])} listed championship editions" + ("; participation reconciliation partial" if pid not in {"pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"} else "")
+        excluded_honours=[]
+        retained_titles=[]
+        for title in player["titles"]:
+            key=(pid,title["team"],title["competition_name"],str(title["edition"]))
+            if key in EXCLUDED_HONOURS:
+                excluded_honours.append({**title,"reason":EXCLUDED_HONOURS[key]})
+            else:
+                retained_titles.append(title)
+        player["titles"]=retained_titles
         entries = {}
         unresolved = []
 
@@ -316,6 +425,9 @@ def main():
                 entries[key]["appearances"] += entry["appearances"]
                 entries[key]["bench_listings"] += entry["bench_listings"]
                 entries[key]["participation_evidence"] += "; " + entry["participation_evidence"]
+                entries[key]["first_date"] = min(entries[key]["first_date"], entry["first_date"])
+                entries[key]["last_date"] = max(entries[key]["last_date"], entry["last_date"])
+                entries[key]["participation_confirmed"] = bool(entries[key]["appearances"] or entries[key]["bench_listings"])
             else:
                 entries[key] = entry
 
@@ -330,6 +442,7 @@ def main():
             if not resolved:
                 unresolved.append({"team": observation["team"], "edition": observation["period"], "source_label": observation["competition_name"], "appearances": observation["appearances"]})
             for name, edition, bucket, appearances, note in resolved:
+                if observation.get("bucket") == "lower_division_club": bucket = "lower_division_club"
                 add(make_entry("club", observation["team"], name, edition, bucket, appearances, 0, observation.get("source_url") or source_urls.get(pid, ""), "appearance", note))
 
         groups = defaultdict(list)
@@ -366,10 +479,13 @@ def main():
             add(make_entry("national", team, name, edition, bucket, apps, 0, source_urls.get(pid, ""), "appearance", "career-statistics youth competition footnote"))
         for team, name, edition, bucket, url in BENCH.get(pid, []):
             add(make_entry("national" if team in {"Brazil", "Argentina", "Portugal"} else "club", team, name, edition, bucket, 0, 1, url, "bench", "documented match-day substitute/squad listing"))
+        for context, team, name, edition, bucket, apps, url, note in HONOUR_PARTICIPATION.get(pid, []):
+            add(make_entry(context, team, name, edition, bucket, apps, 0, url, "appearance", note))
         unmatched = []
         for title in player["titles"]:
             title_name = canonical_name(title["competition_name"])
-            candidates = [entry for entry in entries.values() if entry["team"] == title["team"] and canonical_name(entry["competition_name"]) == title_name and end_year(entry["edition"]) == end_year(title["edition"])]
+            title_team = canonical_team_name(title["team"])
+            candidates = [entry for entry in entries.values() if entry["team"] == title_team and canonical_name(entry["competition_name"]) == title_name and end_year(entry["edition"]) == end_year(title["edition"])]
             if candidates:
                 candidates[0]["won"] = True
                 candidates[0]["title_name"] = title["competition_name"]
@@ -377,6 +493,7 @@ def main():
             else:
                 unmatched.append({"team": title["team"], "competition_name": title["competition_name"], "edition": title["edition"], "reason": "no documented appearance or bench listing in the named edition"})
 
+        status = "complete" if not unmatched and not unresolved else "partial"
         player["competitions"] = sorted(entries.values(), key=lambda entry: (entry["last_date"], entry["competition_name"]))
         player["competitionCoverage"] = {
             "appearanceConfirmed": sum(entry["appearances"] > 0 for entry in entries.values()),
@@ -384,9 +501,11 @@ def main():
             "otherParticipationConfirmed": sum(entry["participation_confirmed"] and not entry["appearances"] and not entry["bench_listings"] for entry in entries.values()),
             "winsMatched": sum(entry["won"] for entry in entries.values()),
             "honoursUnmatched": len(unmatched), "unmatchedHonours": unmatched,
+            "excludedHonours": excluded_honours,
             "unresolvedAggregateRows": unresolved,
-            "reconciliationStatus": "partial" if pid not in {"pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"} else "complete",
+            "reconciliationStatus": status,
         }
+        player["coverage"]["titles"] = f"{len(player['titles'])} listed championship editions; participation reconciliation {status}"
 
     data["meta"]["competitionNotice"] = "Competition editions are named and require a documented appearance or bench listing. Generic aggregate columns are resolved from cited footnotes or excluded; reported honours without participation evidence are not counted as wins."
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))

@@ -19,8 +19,8 @@ Open the address printed by `serve`.
 
 - Compare players at a common age, appearance count or career season.
 - Use named competition families and let users select the comparison universe.
-- Keep national-team finals, qualifiers, intercontinental championships and friendlies separately selectable.
-- Keep national leagues, continental club cups, intercontinental club cups, regional leagues and all other club matches separately selectable.
+- Keep youth national teams, senior finals, qualifiers, intercontinental championships and friendlies separately selectable in the goals chart; friendlies are omitted from the competition-edition selector.
+- Keep lower-division clubs, top-flight national leagues, continental club cups, intercontinental club cups, regional leagues and all other club matches separately selectable.
 - Keep title editions distinct from individual awards and runner-up finishes.
 - Keep every published statistic traceable to a source row and disclose its granularity.
 
@@ -44,7 +44,10 @@ See [docs/methodology.md](docs/methodology.md) and [docs/data-roadmap.md](docs/d
 python -m pip install -r requirements.txt
 python pipeline/download_public_sources.py
 python pipeline/build_public_dataset.py
+python pipeline/expand_web_dataset.py
+python pipeline/build_competition_editions.py
 python pipeline/validate_public_dataset.py
+npm run check
 ```
 
 The downloader caches raw inputs in ignored `data/raw/`. The curated tables retain source URLs and do not combine aggregates of different granularity.

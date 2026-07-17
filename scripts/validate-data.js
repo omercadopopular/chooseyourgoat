@@ -5,6 +5,7 @@ const errors = [];
 const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"];
 const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
 const expansionNationalTotals = { mbappe:[94,55], haaland:[48,55], cruyff:[48,33], baggio:[56,27], neymar:[128,79], lewandowski:[163,88], suarez:[143,69], puskas:[89,84], romario:[70,55] };
+const partialClubTotals = { cristiano:[15,14], mbappe:[24,29], haaland:[24,25], lewandowski:[18,8] };
 const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
 if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
@@ -22,6 +23,16 @@ for (const player of data.players) {
     if (row.goals > row.appearances * 6) errors.push(`${player.id}: implausible goal ratio`);
   }
   for (const title of player.titles) if (!buckets.has(title.bucket)) errors.push(`${player.id}: unknown title bucket ${title.bucket}`);
+  const editionIds=player.competitions.map(row=>row.edition_id);
+  if (new Set(editionIds).size!==editionIds.length) errors.push(`${player.id}: duplicate canonical competition-edition ID`);
+  if (player.competitionCoverage.honoursUnmatched!==0) errors.push(`${player.id}: unmatched honours remain`);
+  const complete=player.competitionCoverage.honoursUnmatched===0&&player.competitionCoverage.unresolvedAggregateRows.length===0;
+  if ((player.competitionCoverage.reconciliationStatus==="complete")!==complete) errors.push(`${player.id}: incorrect reconciliation status`);
+  if (partialClubTotals[player.id]) {
+    const rows=player.observations.filter(row=>row.source_granularity==="partial_season_from_match_ledger");
+    const actual=[rows.reduce((sum,row)=>sum+row.appearances,0),rows.reduce((sum,row)=>sum+row.goals,0)];
+    if (JSON.stringify(actual)!==JSON.stringify(partialClubTotals[player.id])) errors.push(`${player.id}: 2025 partial ledger reconciles to ${actual.join("/")}`);
+  }
   if (expansionNationalTotals[player.id]) {
     const rows = player.observations.filter(row => row.team_context === "national_team");
     const actual = [rows.reduce((sum,row)=>sum+row.appearances,0), rows.reduce((sum,row)=>sum+row.goals,0)];
@@ -29,6 +40,8 @@ for (const player of data.players) {
     if (new Set(rows.map(row=>row.bucket)).size < 2) errors.push(`${player.id}: national matches are not allocated by type`);
   }
 }
+
+if (![...buckets].includes("lower_division_club") || ![...buckets].includes("national_team_youth")) errors.push("missing youth/lower-division selector buckets");
 
 const haalandCity = data.players.find(player=>player.id==="haaland").observations.filter(row=>row.team==="Manchester City");
 if (haalandCity.reduce((sum,row)=>sum+row.appearances,0)!==170 || haalandCity.reduce((sum,row)=>sum+row.goals,0)!==149) errors.push("haaland: Manchester City ledger must reconcile to 170 appearances/149 goals at cutoff");

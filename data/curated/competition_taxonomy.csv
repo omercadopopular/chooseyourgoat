@@ -6,6 +6,7 @@ national_team_continental_championship_qualification,national_team,national_team
 national_team_intercontinental_championship_finals,national_team,national_team_intercontinental_championship_finals,Intercontinental championship finals,Senior national-team competitions or one-match finals between continental champions,FIFA Confederations Cup; Finalissima; Artemio Franchi Cup
 national_team_continental_nations_league,national_team,national_team_continental_nations_league,Continental Nations League,League-format senior national-team competitions organized by a continental confederation,UEFA Nations League
 national_team_olympic,national_team,national_team_olympic,Olympic,Olympic and Olympic-qualification matches,Olympic Games; Pre-Olympic Tournament
+national_team_youth,national_team,national_team_youth,Youth national teams,Matches and competition editions for age-limited national teams below the Olympic/U23 category,FIFA U-20 World Cup; UEFA Under-19 Championship
 national_team_friendlies,national_team,national_team_friendlies,National-team friendlies,National-team matches described by the source as friendly or without a competition label,International friendly
 national_team_other,national_team,national_team_other,Other national-team matches,National-team matches that do not fit another selectable family,Anniversary tournaments; invitational cups
 national_team_tournament_finals_unallocated,national_team,national_team_other,Tournament finals — unallocated,Calendar-year aggregate that the source calls Tournament but does not split by named competition,Career-statistics aggregate
@@ -13,6 +14,7 @@ national_team_qualification_unallocated,national_team,national_team_other,Qualif
 national_team_competitive_unallocated,national_team,national_team_other,Competitive — unallocated,Calendar-year competitive aggregate that cannot be assigned to a named competition family,Career-statistics aggregate
 national_team_all_matches_unallocated,national_team,national_team_other,All national-team matches — unallocated,Calendar-year total with no competitive or friendly split,Career-statistics aggregate
 national_league,club,national_league,National league,National pyramid league and its source-defined championship or postseason,La Liga; Serie A; Brasileirão; NASL
+lower_division_club,club,lower_division_club,Lower-division clubs,All matches for reserve/youth club sides or first teams explicitly listed outside the top tier,Barcelona B; Sporting CP B; USL First Division
 continental_federation_cup,club,continental_federation_cup,Continental federation cup,Club competition organized within one continental confederation,Copa Libertadores; UEFA Champions League
 intercontinental_federation_cup,club,intercontinental_federation_cup,Intercontinental federation cup,Club competition between teams from multiple continental confederations,Intercontinental Cup; FIFA Club World Cup
 regional_league,club,regional_league,Regional league,Subnational or multi-state league competition,Campeonato Paulista; Torneio Rio-São Paulo
