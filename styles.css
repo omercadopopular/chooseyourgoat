@@ -116,30 +116,21 @@ nav {
     #fff;
 }
 .flag-spain {
-  background: linear-gradient(#aa151b 0 25%, #f1bf00 25% 75%, #aa151b 75% 100%);
+  background: linear-gradient(
+    #aa151b 0%,
+    #aa151b 25%,
+    #f1bf00 25%,
+    #f1bf00 75%,
+    #aa151b 75%,
+    #aa151b 100%
+  );
 }
 .flag-brazil {
-  background: #009c3b;
-}
-.flag-brazil::before {
-  content: "";
-  position: absolute;
-  width: 9px;
-  height: 9px;
-  background: #ffdf00;
-  left: 4px;
-  top: 1px;
-  transform: rotate(45deg) scale(.72);
-}
-.flag-brazil::after {
-  content: "";
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #002776;
-  left: 6px;
-  top: 3px;
+  background:
+    radial-gradient(circle at 50% 50%, #002776 0%, #002776 19%, transparent 20%),
+    linear-gradient(30deg, transparent 0%, transparent 36%, #ffdf00 37%, #ffdf00 63%, transparent 64%, transparent 100%),
+    linear-gradient(-30deg, transparent 0%, transparent 36%, #ffdf00 37%, #ffdf00 63%, transparent 64%, transparent 100%),
+    #009c3b;
 }
 nav a {
   color: var(--muted);
