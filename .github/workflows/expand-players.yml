@@ -6,18 +6,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: '3.12', cache: pip}
-      - uses: actions/setup-node@v4
-        with: {node-version: '22'}
       - run: pip install -r requirements.txt
-      - run: npm ci
       - run: python pipeline/download_public_sources.py --force
       - run: python pipeline/build_public_dataset.py
       - run: python pipeline/expand_web_dataset.py
       - run: python pipeline/build_competition_editions.py
-      - run: npm run check
+      - run: node scripts/validate-data.js && node --test
       - name: Commit generated expansion
         run: |
           git config user.name github-actions[bot]
