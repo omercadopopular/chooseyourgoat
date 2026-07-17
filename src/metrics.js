@@ -86,9 +86,9 @@ export function lastAtOrBefore(series, endpoint) {
   return [...series].reverse().find(point => point.x <= endpoint) || series[0];
 }
 
-export function formatMetric(value, metric) {
+export function formatMetric(value, metric, locale = "en-US") {
   if (value == null) return "N/A";
   if (["goalsPerGame", "marginalGoalsPerGame"].includes(metric)) return value.toFixed(2);
   if (metric === "cumulativeCompetitionWinRate") return `${(value*100).toFixed(1)}%`;
-  return Math.round(value).toLocaleString("en-US");
+  return Math.round(value).toLocaleString(locale);
 }

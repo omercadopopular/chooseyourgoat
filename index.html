@@ -12,56 +12,63 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#top" aria-label="Choose Your GOAT home">
+      <a class="brand" href="#top" aria-label="Choose Your GOAT home" data-i18n-aria="homeAria">
         <span class="brand-mark">G</span>
         <span>CHOOSE YOUR <strong>GOAT</strong></span>
       </a>
-      <nav aria-label="Main navigation">
-        <a class="active" href="#compare">Compare</a>
-        <a href="#method">Method</a>
-        <a href="#coverage">Coverage</a>
-      </nav>
+      <div class="header-actions">
+        <nav aria-label="Main navigation" data-i18n-aria="navAria">
+          <a class="active" href="#compare" data-i18n="compare">Compare</a>
+          <a href="#method" data-i18n="method">Method</a>
+          <a href="#coverage" data-i18n="coverage">Coverage</a>
+        </nav>
+        <div class="language-switcher" role="group" aria-label="Language">
+          <button type="button" data-language="en" aria-label="English" title="English"><span class="flag-england" aria-hidden="true"></span><span class="language-code">EN</span></button>
+          <button type="button" data-language="es" aria-label="Español" title="Español"><span aria-hidden="true">🇪🇸</span><span class="language-code">ES</span></button>
+          <button type="button" data-language="pt" aria-label="Português do Brasil" title="Português do Brasil"><span aria-hidden="true">🇧🇷</span><span class="language-code">PT</span></button>
+        </div>
+      </div>
     </header>
 
     <main id="top">
       <section class="hero">
-        <div class="eyebrow">FIFTEEN PLAYERS · ONE COMMON SCALE</div>
-        <h1>Greatness needs<br /><em>a denominator.</em></h1>
-        <p>Compare football's defining attackers at the same age, career stage, or number of appearances—not just at retirement.</p>
-        <a class="hero-cta" href="#compare">Build a comparison <span>↓</span></a>
+        <div class="eyebrow" data-i18n="eyebrow">FIFTEEN PLAYERS · ONE COMMON SCALE</div>
+        <h1 data-i18n-html="heroTitle">Greatness needs<br /><em>a denominator.</em></h1>
+        <p data-i18n="heroText">Compare football's defining attackers at the same age, career stage, or number of appearances—not just at retirement.</p>
+        <a class="hero-cta" href="#compare"><span data-i18n="heroCta">Build a comparison</span> <span>↓</span></a>
         <div class="ball-orbit" aria-hidden="true"><div class="ball">✦</div></div>
       </section>
 
       <aside class="prototype-note" role="note">
-        <strong>Sourced research release · cutoff 31 December 2025</strong>
-        <span>Timeline curves use dated or season-allocated records. Undated multi-year aggregates remain documented but are not assigned to an arbitrary endpoint.</span>
+        <strong data-i18n="releaseTitle">Sourced research release · cutoff 31 December 2025</strong>
+        <span data-i18n="releaseText">Timeline curves use dated or season-allocated records. Undated multi-year aggregates remain documented but are not assigned to an arbitrary endpoint.</span>
       </aside>
 
       <section class="compare-section" id="compare">
         <div class="section-heading">
           <div>
-            <span class="kicker">01 / THE MATCH-UP</span>
-            <h2>Pick your legends</h2>
+            <span class="kicker" data-i18n="matchupKicker">01 / THE MATCH-UP</span>
+            <h2 data-i18n="pickLegends">Pick your legends</h2>
           </div>
-          <p>Select any number of players (minimum two), or compare the entire field. Every headline value is evaluated at the last point all selected players have in common.</p>
+          <p data-i18n="pickText">Select any number of players (minimum two), or compare the entire field. Every headline value is evaluated at the last point all selected players have in common.</p>
         </div>
 
         <div class="player-filters">
-          <label class="player-search">Search players<input id="player-search" type="search" placeholder="Name or country" /></label>
-          <label>Era<select id="era-filter"><option value="all">All eras</option><option value="historical">Before 1980</option><option value="modern">1980–2009</option><option value="current">2010–present</option></select></label>
-          <label>Role<select id="role-filter"><option value="all">All roles</option><option value="forward">Forward</option><option value="attacking_midfielder">Attacking midfielder</option></select></label>
-          <label>Country<select id="country-filter"><option value="all">All countries</option></select></label>
+          <label class="player-search"><span data-i18n="searchPlayers">Search players</span><input id="player-search" type="search" placeholder="Name or country" data-i18n-placeholder="searchPlaceholder" /></label>
+          <label><span data-i18n="era">Era</span><select id="era-filter"><option value="all" data-i18n="allEras">All eras</option><option value="historical" data-i18n="before1980">Before 1980</option><option value="modern" data-i18n="modernEra">1980–2009</option><option value="current" data-i18n="currentEra">2010–present</option></select></label>
+          <label><span data-i18n="role">Role</span><select id="role-filter"><option value="all" data-i18n="allRoles">All roles</option><option value="forward" data-i18n="forward">Forward</option><option value="attacking_midfielder" data-i18n="attackingMidfielder">Attacking midfielder</option></select></label>
+          <label><span data-i18n="country">Country</span><select id="country-filter"><option value="all" data-i18n="allCountries">All countries</option></select></label>
         </div>
         <div class="selected-tray" id="selected-tray" aria-live="polite"></div>
-        <div class="player-grid" id="player-grid" aria-label="Player selection"></div>
+        <div class="player-grid" id="player-grid" aria-label="Player selection" data-i18n-aria="playerSelectionAria"></div>
 
         <section class="restriction-panel" aria-labelledby="restriction-title">
           <div class="restriction-heading">
-            <div><span class="kicker">INCLUDE IN THE CHART</span><h3 id="restriction-title">Choose which goals count</h3></div>
-            <div class="restriction-presets" aria-label="Filter presets">
-              <button type="button" data-preset="all">All categories</button>
-              <button type="button" data-preset="club">Club only</button>
-              <button type="button" data-preset="national_team">National team only</button>
+            <div><span class="kicker" data-i18n="includeChart">INCLUDE IN THE CHART</span><h3 id="restriction-title" data-i18n="chooseGoals">Choose which goals count</h3></div>
+            <div class="restriction-presets" aria-label="Filter presets" data-i18n-aria="filterPresetsAria">
+              <button type="button" data-preset="all" data-i18n="allCategories">All categories</button>
+              <button type="button" data-preset="club" data-i18n="clubOnly">Club only</button>
+              <button type="button" data-preset="national_team" data-i18n="nationalOnly">National team only</button>
             </div>
           </div>
           <div class="restriction-groups" id="restriction-groups"></div>
@@ -69,94 +76,94 @@
         </section>
 
         <div class="control-panel">
-          <label>Measure
+          <label><span data-i18n="measure">Measure</span>
             <select id="metric-select">
-              <option value="goals">Cumulative goals</option>
-              <option value="goalsPerGame">Cumulative average goals / game</option>
-              <option value="marginalGoalsPerGame">Marginal average goals / game</option>
+              <option value="goals" data-i18n="cumulativeGoals">Cumulative goals</option>
+              <option value="goalsPerGame" data-i18n="cumulativeGoalsPerGame">Cumulative average goals / game</option>
+              <option value="marginalGoalsPerGame" data-i18n="marginalGoalsPerGame">Marginal average goals / game</option>
             </select>
           </label>
-          <label>Normalize by
+          <label><span data-i18n="normalizeBy">Normalize by</span>
             <select id="axis-select">
-              <option value="age">Age</option>
-              <option value="appearances">Appearances</option>
-              <option value="careerSeason">Career season</option>
+              <option value="age" data-i18n="age">Age</option>
+              <option value="appearances" data-i18n="appearances">Appearances</option>
+              <option value="careerSeason" data-i18n="careerSeason">Career season</option>
             </select>
           </label>
           <label class="common-toggle">
             <input id="common-support" type="checkbox" checked />
-            <span>Common support only</span>
+            <span data-i18n="commonOnly">Common support only</span>
           </label>
         </div>
 
         <div class="chart-shell">
           <div class="chart-meta">
-            <div><span id="chart-kicker">CUMULATIVE GOALS</span><h3 id="chart-title">By age</h3></div>
+            <div><span id="chart-kicker">CUMULATIVE GOALS</span><h3 id="chart-title" data-i18n="byAge">By age</h3></div>
             <div class="legend" id="legend"></div>
           </div>
-          <div id="chart" class="chart" role="img" aria-label="Interactive comparison chart"></div>
-          <div class="chart-footer"><span id="support-note"></span><span>Hover or focus a point for detail</span></div>
+          <div id="chart" class="chart" role="img" aria-label="Interactive comparison chart" data-i18n-aria="chartAria"></div>
+          <div class="chart-footer"><span id="support-note"></span><span data-i18n="hoverDetail">Hover or focus a point for detail</span></div>
         </div>
 
         <div class="scorecards" id="scorecards"></div>
-        <p class="restriction-summary">Rate curves can be normalized by age or cumulative appearances. Marginal averages use the matches in each dated season/calendar-year observation; cumulative averages use every selected match through that point.</p>
+        <p class="restriction-summary" data-i18n="rateExplanation">Rate curves can be normalized by age or cumulative appearances. Marginal averages use the matches in each dated season/calendar-year observation; cumulative averages use every selected match through that point.</p>
 
         <div class="section-heading competition-heading">
-          <div><span class="kicker">02 / COMPETITION RECORD</span><h2>Winning the competitions entered</h2></div>
-          <p>An edition counts only when participation is documented by an appearance or bench listing. Friendlies are excluded. This chart has its own competition-family choices.</p>
+          <div><span class="kicker" data-i18n="competitionKicker">02 / COMPETITION RECORD</span><h2 data-i18n="competitionHeading">Winning the competitions entered</h2></div>
+          <p data-i18n="competitionText">An edition counts only when participation is documented by an appearance or bench listing. Friendlies are excluded. This chart has its own competition-family choices.</p>
         </div>
         <section class="restriction-panel" aria-labelledby="competition-restriction-title">
           <div class="restriction-heading">
-            <div><span class="kicker">INCLUDE IN THE COMPETITION CHART</span><h3 id="competition-restriction-title">Choose which competitions count</h3></div>
-            <div class="restriction-presets" aria-label="Competition filter presets">
-              <button type="button" data-competition-preset="all">All categories</button>
-              <button type="button" data-competition-preset="club">Club only</button>
-              <button type="button" data-competition-preset="national_team">National team only</button>
+            <div><span class="kicker" data-i18n="includeCompetitionChart">INCLUDE IN THE COMPETITION CHART</span><h3 id="competition-restriction-title" data-i18n="chooseCompetitions">Choose which competitions count</h3></div>
+            <div class="restriction-presets" aria-label="Competition filter presets" data-i18n-aria="competitionPresetsAria">
+              <button type="button" data-competition-preset="all" data-i18n="allCategories">All categories</button>
+              <button type="button" data-competition-preset="club" data-i18n="clubOnly">Club only</button>
+              <button type="button" data-competition-preset="national_team" data-i18n="nationalOnly">National team only</button>
             </div>
           </div>
           <div class="restriction-groups" id="competition-restriction-groups"></div>
           <p class="restriction-summary" id="competition-restriction-summary"></p>
         </section>
         <div class="control-panel">
-          <label>Competition measure
+          <label><span data-i18n="competitionMeasure">Competition measure</span>
             <select id="competition-metric-select">
-              <option value="competitionsWon">Cumulative competitions won</option>
-              <option value="cumulativeCompetitionWinRate">Cumulative average win rate</option>
+              <option value="competitionsWon" data-i18n="cumulativeCompetitionsWon">Cumulative competitions won</option>
+              <option value="cumulativeCompetitionWinRate" data-i18n="cumulativeWinRate">Cumulative average win rate</option>
             </select>
           </label>
-          <label>Normalize by
-            <select id="competition-axis-select"><option value="competitionCount">Competitions played</option><option value="age">Age</option></select>
+          <label><span data-i18n="normalizeBy">Normalize by</span>
+            <select id="competition-axis-select"><option value="competitionCount" data-i18n="competitionsPlayed">Competitions played</option><option value="age" data-i18n="age">Age</option></select>
           </label>
-          <label class="common-toggle"><input id="competition-common-support" type="checkbox" checked /><span>Common support only</span></label>
+          <label class="common-toggle"><input id="competition-common-support" type="checkbox" checked /><span data-i18n="commonOnly">Common support only</span></label>
         </div>
         <div class="chart-shell">
-          <div class="chart-meta"><div><span id="competition-chart-kicker">CUMULATIVE COMPETITIONS WON</span><h3 id="competition-chart-title">By competitions played</h3></div><div class="legend" id="competition-legend"></div></div>
-          <div id="competition-chart" class="chart" role="img" aria-label="Interactive competition comparison chart"></div>
-          <div class="chart-footer"><span id="competition-support-note"></span><span>Appearance-confirmed edition coverage</span></div>
+          <div class="chart-meta"><div><span id="competition-chart-kicker">CUMULATIVE COMPETITIONS WON</span><h3 id="competition-chart-title" data-i18n="byCompetitionsPlayed">By competitions played</h3></div><div class="legend" id="competition-legend"></div></div>
+          <div id="competition-chart" class="chart" role="img" aria-label="Interactive competition comparison chart" data-i18n-aria="competitionChartAria"></div>
+          <div class="chart-footer"><span id="competition-support-note"></span><span data-i18n="appearanceCoverage">Appearance-confirmed edition coverage</span></div>
         </div>
         <div class="scorecards" id="competition-scorecards"></div>
       </section>
 
       <section class="method-section" id="method">
-        <span class="kicker light">02 / THE RULES</span>
-        <h2>Same question.<br />Same exposure.</h2>
+        <span class="kicker light" data-i18n="rulesKicker">02 / THE RULES</span>
+        <h2 data-i18n-html="rulesTitle">Same question.<br />Same exposure.</h2>
         <div class="principles">
-          <article><span>01</span><h3>Common support</h3><p>Career comparisons stop at the latest age or appearance count observed for every selected player.</p></article>
-          <article><span>02</span><h3>You choose the universe</h3><p>Named competition families stay separate. No source-defined status decides which matches count.</p></article>
-          <article><span>03</span><h3>Sources stay visible</h3><p>National-team points come from complete match ledgers. Historical club points use season-by-competition aggregates and are labelled accordingly.</p></article>
+          <article><span>01</span><h3 data-i18n="commonSupport">Common support</h3><p data-i18n="commonSupportText">Career comparisons stop at the latest age or appearance count observed for every selected player.</p></article>
+          <article><span>02</span><h3 data-i18n="chooseUniverse">You choose the universe</h3><p data-i18n="chooseUniverseText">Named competition families stay separate. No source-defined status decides which matches count.</p></article>
+          <article><span>03</span><h3 data-i18n="visibleSources">Sources stay visible</h3><p data-i18n="visibleSourcesText">National-team points come from complete match ledgers. Historical club points use season-by-competition aggregates and are labelled accordingly.</p></article>
         </div>
       </section>
 
       <section class="coverage-section" id="coverage">
         <div class="section-heading">
-          <div><span class="kicker">03 / DATA COVERAGE</span><h2>Trust the gaps, too.</h2></div>
-          <p>Coverage is stated by field and granularity. Aggregate rows are never silently added to overlapping match-level records.</p>
+          <div><span class="kicker" data-i18n="coverageKicker">03 / DATA COVERAGE</span><h2 data-i18n="coverageTitle">Trust the gaps, too.</h2></div>
+          <p data-i18n="coverageText">Coverage is stated by field and granularity. Aggregate rows are never silently added to overlapping match-level records.</p>
         </div>
-        <div class="coverage-table-wrap"><table><thead><tr><th>Player</th><th>Club record</th><th>Senior national team</th><th>Titles</th><th>Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
+        <div class="coverage-table-wrap"><table><thead><tr><th data-i18n="player">Player</th><th data-i18n="clubRecord">Club record</th><th data-i18n="seniorNational">Senior national team</th><th data-i18n="titles">Titles</th><th data-i18n="status">Status</th></tr></thead><tbody id="coverage-body"></tbody></table></div>
       </section>
     </main>
 
-    <footer><div class="brand"><span class="brand-mark">G</span><span>CHOOSE YOUR <strong>GOAT</strong></span></div><p>Evidence first. Arguments welcome.</p><a href="docs/methodology.md">Methodology ↗</a></footer>
+    <footer><div class="brand"><span class="brand-mark">G</span><span>CHOOSE YOUR <strong>GOAT</strong></span></div><p data-i18n="footerText">Evidence first. Arguments welcome.</p><a href="docs/methodology.md" data-i18n="methodology">Methodology ↗</a></footer>
     <div class="tooltip" id="tooltip" hidden></div>
     <script type="module" src="app.js"></script>
   </body>

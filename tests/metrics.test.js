@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { buildCompetitionSeries, buildSeries, commonEndpoint, formatMetric, trimToCommon } from "../src/metrics.js";
+import { localeFor, taxonomyLabel, translate } from "../src/i18n.js";
 
 const data = JSON.parse(await readFile(new URL("../data/web_dataset.json", import.meta.url)));
 const players = data.players;
@@ -176,4 +177,14 @@ test("every player's honours and source aggregates are fully adjudicated", () =>
     assert.equal(player.competitionCoverage.honoursUnmatched,0,`${player.id}: unmatched honours`);
     assert.deepEqual(player.competitionCoverage.unresolvedAggregateRows,[],`${player.id}: unresolved rows`);
   }
+});
+
+test("English, Spanish and Brazilian Portuguese UI dictionaries cover core charts", () => {
+  for (const language of ["en", "es", "pt"]) {
+    for (const key of ["pageTitle", "chooseGoals", "cumulativeGoals", "chooseCompetitions", "cumulativeWinRate", "coverageTitle"]) {
+      assert.notEqual(translate(language, key), key, `${language}: ${key}`);
+    }
+    assert.notEqual(taxonomyLabel(language, "national_team_world_cup_finals"), "national_team_world_cup_finals");
+  }
+  assert.equal(localeFor("pt"), "pt-BR");
 });
