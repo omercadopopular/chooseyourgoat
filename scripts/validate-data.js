@@ -6,6 +6,11 @@ const base = ["pele", "messi", "cristiano", "ronaldo", "ronaldinho", "maradona"]
 const expansion = ["mbappe", "haaland", "cruyff", "baggio", "neymar", "lewandowski", "suarez", "puskas", "romario"];
 const expansionNationalTotals = { mbappe:[94,55], haaland:[48,55], cruyff:[48,33], baggio:[56,27], neymar:[128,79], lewandowski:[163,88], suarez:[143,69], puskas:[89,84], romario:[70,55] };
 const partialClubTotals = { cristiano:[15,14], mbappe:[24,29], haaland:[24,25], lewandowski:[18,8] };
+const competitionTotals = {
+  pele:[28,64], messi:[46,113], cristiano:[34,125], ronaldo:[18,67], ronaldinho:[16,89], maradona:[11,57],
+  mbappe:[21,63], haaland:[9,49], cruyff:[22,63], baggio:[4,62], neymar:[31,80], lewandowski:[32,103],
+  suarez:[24,103], puskas:[17,58], romario:[20,106]
+};
 const buckets = new Set(data.taxonomy.flatMap(group => group.children.map(child => child.id)));
 
 if (data.meta.isFixture !== false) errors.push("web dataset is marked as a fixture");
@@ -26,6 +31,9 @@ for (const player of data.players) {
   const editionIds=player.competitions.map(row=>row.edition_id);
   if (new Set(editionIds).size!==editionIds.length) errors.push(`${player.id}: duplicate canonical competition-edition ID`);
   if (player.competitionCoverage.honoursUnmatched!==0) errors.push(`${player.id}: unmatched honours remain`);
+  if (player.competitionCoverage.unresolvedAggregateRows.length!==0) errors.push(`${player.id}: unresolved aggregate rows remain`);
+  const actualCompetitionTotal=[player.competitions.filter(row=>row.won).length,player.competitions.length];
+  if (JSON.stringify(actualCompetitionTotal)!==JSON.stringify(competitionTotals[player.id])) errors.push(`${player.id}: competition ledger changed to ${actualCompetitionTotal.join('/')}`);
   const complete=player.competitionCoverage.honoursUnmatched===0&&player.competitionCoverage.unresolvedAggregateRows.length===0;
   if ((player.competitionCoverage.reconciliationStatus==="complete")!==complete) errors.push(`${player.id}: incorrect reconciliation status`);
   if (partialClubTotals[player.id]) {

@@ -169,3 +169,11 @@ test("competition editions use named competitions rather than aggregate columns"
   const forbidden = new Set(["national cup", "continental", "europe", "other", "cup", "league", "postseason", "competitive", "friendly", "state league", "regional league", "league cup"]);
   for (const player of players) assert.ok(player.competitions.every(edition => !forbidden.has(edition.competition_name.toLowerCase())));
 });
+
+test("every player's honours and source aggregates are fully adjudicated", () => {
+  for (const player of players) {
+    assert.equal(player.competitionCoverage.reconciliationStatus,"complete",`${player.id}: status`);
+    assert.equal(player.competitionCoverage.honoursUnmatched,0,`${player.id}: unmatched honours`);
+    assert.deepEqual(player.competitionCoverage.unresolvedAggregateRows,[],`${player.id}: unresolved rows`);
+  }
+});

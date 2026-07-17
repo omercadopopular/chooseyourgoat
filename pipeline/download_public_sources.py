@@ -35,6 +35,7 @@ SOURCES={
     'lewandowski_tm_performance.json':'https://tmapi.transfermarkt.technology/player/38253/performance-game',
     'neymar_tm_performance.json':'https://tmapi.transfermarkt.technology/player/68290/performance-game',
     'suarez_tm_performance.json':'https://tmapi.transfermarkt.technology/player/44352/performance-game',
+    'romario_tm_performance.json':'https://tmapi.transfermarkt.technology/player/7942/performance-game',
     'pele_intl.html':WIKI+'List_of_international_goals_scored_by_Pel%C3%A9',
     'messi_intl.html':WIKI+'List_of_international_goals_scored_by_Lionel_Messi',
     'cristiano_intl.html':WIKI+'List_of_international_goals_scored_by_Cristiano_Ronaldo',

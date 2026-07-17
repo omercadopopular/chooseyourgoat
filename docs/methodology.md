@@ -83,12 +83,15 @@ or season. Assigning them to the last year of the span would create a fictitious
 The nine-player expansion uses public career-spanning club season tables and
 complete senior national-team match ledgers. RSSSF supplies Cruyff, Baggio,
 Neymar, Lewandowski, Suárez, Puskás and Romário; Transfermarkt's public
-performance feed supplies Mbappé and Haaland. Each cap is classified before
-the match rows are grouped for the browser chart. Its competition-edition
-ledger remains conservative: only named editions supported by an appearance
-row are counted, while unresolved aggregate “Other” club cells and honours
-without edition-level participation evidence remain excluded and visibly
-marked as partial reconciliation.
+performance feed supplies Mbappé and Haaland and provides modern match-ledger
+cross-checks. Each cap is classified before the match rows are grouped for the
+browser chart. Every expansion `Other` cell has now been decomposed into named
+editions, parent-edition playoffs, or an explicit source-level exclusion. All
+reported honours are matched to participation evidence or explicitly excluded
+with a reason. Thus every player has zero unmatched honours and zero unresolved
+aggregate rows. Two historical source cells remain transparently excluded from
+the denominator because their cited tables do not name a competition: Cruyff's
+one Ajax match in 1968-69 and Puskás's four Honvéd matches in 1953.
 
 The 2025-26 rows cannot be used whole because they cross the 31 December 2025
 cutoff. The browser bundle therefore retains completed-season tables and adds

@@ -52,7 +52,9 @@ These tables are a research release, not a claim of perfect completeness.
 Every row retains its source and granularity. Competition names and team aliases
 are canonicalized before edition IDs are constructed. A player's reconciliation
 is labelled complete only when no unmatched honour or unresolved aggregate row
-remains; unsupported honours are disclosed and excluded from win counts.
+remains. The current 15-player release meets that condition. Unsupported
+honours and unnamed source cells are retained as explicit adjudication records
+and excluded from win/played counts rather than silently dropped.
 
 Do not add aggregate rows from `season_competition.csv` to match-level rows.
 They are alternative views with overlapping coverage. In particular, the
