@@ -100,7 +100,7 @@ nav {
 }
 .flag-england,
 .flag-spain,
-.flag-brazil {
+.flag-portugal {
   width: 18px;
   height: 12px;
   display: inline-block;
@@ -125,12 +125,10 @@ nav {
     #aa151b 100%
   );
 }
-.flag-brazil {
+.flag-portugal {
   background:
-    radial-gradient(circle at 50% 50%, #002776 0%, #002776 19%, transparent 20%),
-    linear-gradient(30deg, transparent 0%, transparent 36%, #ffdf00 37%, #ffdf00 63%, transparent 64%, transparent 100%),
-    linear-gradient(-30deg, transparent 0%, transparent 36%, #ffdf00 37%, #ffdf00 63%, transparent 64%, transparent 100%),
-    #009c3b;
+    radial-gradient(circle at 40% 50%, #ffcc29 0%, #ffcc29 14%, transparent 16%),
+    linear-gradient(90deg, #046a38 0%, #046a38 40%, #da291c 40%, #da291c 100%);
 }
 nav a {
   color: var(--muted);
