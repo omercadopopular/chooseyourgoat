@@ -4,7 +4,7 @@ An evidence-first football comparison interface covering Pelé, Lionel Messi, Cr
 
 ## Current status
 
-The public chart is wired to the reproducible research release through `data/web_dataset.json`. It provides independent hierarchical filters for the goals/games and competition-edition charts, normalization by age, appearances or career season, cumulative and marginal goal rates, and participation-confirmed title counts. The fixed comparison cutoff is 31 December 2025. All 15 competition ledgers have zero unmatched honours and zero unresolved aggregate rows; explicit evidence-based exclusions remain visible in the release metadata.
+The public chart is wired to the reproducible research release through `data/web_dataset.json`. It provides independent hierarchical filters for the goals/games and competition-edition charts, normalization by age, appearances or career season, cumulative and marginal goal rates, and participation-confirmed title counts. The interface can be switched between English, Spanish and Brazilian Portuguese. The fixed comparison cutoff is 31 December 2025. All 15 competition ledgers have zero unmatched honours and zero unresolved aggregate rows; explicit evidence-based exclusions remain visible in the release metadata.
 
 ## Run locally
 
